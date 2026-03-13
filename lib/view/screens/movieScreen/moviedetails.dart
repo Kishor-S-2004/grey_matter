@@ -4,16 +4,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:grey_matter/api_service/movie_apiservice.dart';
+import 'package:grey_matter/model/movie/movie_model.dart';
 import 'package:grey_matter/repositories/movie_repositories.dart';
 import 'package:grey_matter/repositories/series_repositories.dart';
 import 'package:grey_matter/view/screens/castDetails_view.dart';
 import 'package:grey_matter/view/widgets/homescreen_widgets.dart';
 import 'package:grey_matter/view/widgets/movie_details_widgets.dart';
 import 'package:grey_matter/viewmodel/bloc/credits/credits_bloc.dart';
+import 'package:grey_matter/viewmodel/bloc/favMovie/fav_movie_event.dart';
 
 import '../../../api_service/tv_show_apiservice.dart';
 import '../../../viewmodel/bloc/castDetails/cast_details_bloc.dart';
+import '../../../viewmodel/bloc/favMovie/fav_movie_bloc.dart';
+import '../../../viewmodel/bloc/favMovie/fav_movie_state.dart';
+import '../../../viewmodel/bloc/movieReview/movie_review_bloc.dart';
 import '../../../viewmodel/bloc/movieVideo/movie_video_bloc.dart';
+import '../../../viewmodel/bloc/watchlist/watch_list_bloc.dart';
+import '../../../viewmodel/bloc/watchlist/watch_list_event.dart';
+import '../../../viewmodel/bloc/watchlist/watch_list_state.dart';
 import 'movieplayingscreen.dart';
 
 class Moviedetails extends StatefulWidget {
@@ -41,30 +49,32 @@ class Moviedetails extends StatefulWidget {
 }
 
 class _MoviedetailsState extends State<Moviedetails> {
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   context.read<CredtisBloc>().add(
-  //     FetchCreditDetails(widget.movieId),
-  //   );
-  // }
+
+  @override
+  void initState() {
+    super.initState();
+
+    context.read<FavMovieBloc>().add(FetchFavMovies());
+  }
 
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final MovieRepositories repositories = MovieRepositories(MovieApiservice());
-    final SeriesRepositories Seriesrepositories = SeriesRepositories(SeriesApiService());
+    final SeriesRepositories Seriesrepositories = SeriesRepositories(
+      SeriesApiService(),
+    );
     // CredtisBloc credtisBloc = CredtisBloc(repositories.getCreditDetails(widget.movieId) as MovieRepositories);
     return Scaffold(
       body: Stack(
         children: [
           SizedBox(height: 15),
           SizedBox(
-            height: screenHeight * 0.7,
+            height: screenHeight * 0.8,
             width: double.infinity,
             child: Opacity(
               opacity: 0.12,
-              child: Image.network(widget.posterPath, fit: BoxFit.cover),
+              child: Image.network(widget.posterPath, fit: BoxFit.fill),
             ),
           ),
 
@@ -77,9 +87,10 @@ class _MoviedetailsState extends State<Moviedetails> {
 
               return SingleChildScrollView(
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 60),
 
                     /// Movie Name
                     Center(
@@ -212,8 +223,13 @@ class _MoviedetailsState extends State<Moviedetails> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => BlocProvider(
-                                        create: (context) => CastDetailsBloc(repositories,Seriesrepositories)..add(FetchCastDetailsEvent(cast.id)),
-                                        child: CastdetailsView(personName: cast.originalName,),
+                                        create: (context) => CastDetailsBloc(
+                                          repositories,
+                                          Seriesrepositories,
+                                        )..add(FetchCastDetailsEvent(cast.id)),
+                                        child: CastdetailsView(
+                                          personName: cast.originalName,
+                                        ),
                                       ),
                                     ),
                                   );
@@ -335,6 +351,93 @@ class _MoviedetailsState extends State<Moviedetails> {
                 ),
               );
             },
+          ),
+          Positioned(
+            right: 20,
+            top: 40,
+            child: BlocConsumer<FavMovieBloc, FavMovieState>(
+              listenWhen: (previous, current) =>
+              current is Added || current is Removed || current is Failure,
+              listener: (context, state) {
+                state.when(initial: (){}, loading: (){}, loaded: (movie){
+                }, added: (){
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Added To Favourites')));
+                },removed: (){
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Removed From Favourites')));
+                },error: (error){
+                  Text(error);
+                });
+              },
+              builder: (context, state) {
+                bool isFavorite = false;
+
+                if (state is Loaded) {
+                  isFavorite = state.movie.any(
+                        (movie) => movie.id == widget.movieId,
+                  );
+                }
+                
+                return IconButton(
+                  onPressed: () {
+                    
+                    final movie = Result(
+                      id: widget.movieId,
+                      title: widget.movieName,
+                      posterPath: widget.posterPath,
+                      voteAverage: widget.voteAverage,
+                      overview: widget.movieDescritpion,
+                    );
+
+                    context.read<FavMovieBloc>().add(FavMovieEvent.addFavMovie(movie));
+                  },
+                  icon: Icon(
+                    isFavorite ? Icons.favorite : Icons.favorite_border,
+                    size: 28,
+                    color: Colors.red,
+                  ),
+                );
+              },
+            ),
+          ),
+
+          Positioned(
+            right: 20,
+            top: 80,
+            child: BlocBuilder<WatchListBloc, WatchListState>(
+              builder: (context, state) {
+                final isBookmarked = state.movies.any(
+                      (s) => s.id == widget.movieId,
+                );
+
+                return IconButton(
+                  onPressed: () {
+                    if (isBookmarked) {
+                      context.read<WatchListBloc>().add(
+                        WatchListEvent.removeMovieFromWatchList(widget.movieId),
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Removed From WatchList')));
+                    } else {
+                      context.read<WatchListBloc>().add(
+                        WatchListEvent.addMovieToWatchList(
+                          Result(
+                            id: widget.movieId,
+                            overview: widget.movieDescritpion,
+                            title: widget.movieName,posterPath: widget.posterPath,
+                          ),
+                        ),
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Added To WatchList')));
+
+                    }
+                  },
+                  icon: Icon(
+                    isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                    color: Colors.white,
+                    size: 30,
+                  ),
+                );
+              },
+            ),
           ),
           Positioned(
             left: 15,

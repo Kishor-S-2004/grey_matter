@@ -18,13 +18,14 @@ import 'package:http/http.dart' as http;
 
 import '../model/movie/movie_model.dart';
 import '../model/movie/movie_review.dart';
+import '../model/movie/nowPlayingMovies_model.dart';
 
 class MovieApiservice {
   final String movie_baseurl = 'https://api.themoviedb.org/3/movie/popular';
   final String genre_baseurl = 'https://api.themoviedb.org/3/genre/movie/list';
   final String upcoming_movies = 'https://api.themoviedb.org/3/movie/upcoming?language=en-US&page=10';
   final String top_rated_movies = 'https://api.themoviedb.org/3/movie/top_rated';
-
+  final String nowPlayingMovies = 'https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=15';
   // final String credit_details = 'https://api.themoviedb.org/3/movie/{movie_id}/credits';
 
 
@@ -132,7 +133,7 @@ class MovieApiservice {
   }
 
   Future<MovieReview> fetchMovieReviews(int movieId) async{
-    final movie_review_url = 'https://api.themoviedb.org/3/movie/$movieId/reviews';
+    final movie_review_url = 'https://api.themoviedb.org/3/movie/$movieId/reviews?language=en-US&page=1';
     final url = Uri.parse(movie_review_url);
     final response = await http.get(url,headers: {
       'Authorization' : 'Bearer ${dotenv.env['MOVIE_API_ACCESS_KEY']}'
@@ -212,6 +213,19 @@ class MovieApiservice {
       return SearchCast.fromJson(json);
     } else {
     throw Exception('Can’t fetch cast right now');
+    }
+  }
+
+  Future<NowPlayingMovies> fetchNowPlayingMovie() async{
+    final url = Uri.parse(nowPlayingMovies);
+    final response = await http.get(url,headers: {
+      'Authorization' : 'Bearer ${dotenv.env['MOVIE_API_ACCESS_KEY']}'
+    });
+    if(response.statusCode == 200){
+      final json = jsonDecode(response.body);
+      return NowPlayingMovies.fromJson(json);
+    }else{
+      throw Exception('Cant load now playing movies');
     }
   }
 }

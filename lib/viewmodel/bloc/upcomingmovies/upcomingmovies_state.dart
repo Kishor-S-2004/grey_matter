@@ -8,7 +8,7 @@ class UpcomingmoviesInitial extends UpcomingmoviesState {}
 class UpcomingMoviesLoading extends UpcomingmoviesState {}
 
 class UpcomingmoviesLoaded extends UpcomingmoviesState {
-  final List<Results> upcomingModel;
+  final List<Results>? upcomingModel;
   UpcomingmoviesLoaded(this.upcomingModel);
 }
 

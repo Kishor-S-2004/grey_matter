@@ -4,6 +4,7 @@ import 'package:grey_matter/model/tvShow/airing_today.dart';
 import 'package:grey_matter/model/tvShow/searchTvShow_model.dart';
 import 'package:grey_matter/model/tvShow/season_model.dart';
 import 'package:grey_matter/model/tvShow/seriesCast_model.dart';
+import 'package:grey_matter/model/tvShow/seriesRecommendations_model.dart';
 import 'package:grey_matter/model/tvShow/top_rated_tv_show.dart';
 import 'package:grey_matter/model/tvShow/tvShowVideo_model.dart';
 
@@ -39,5 +40,9 @@ class SeriesRepositories {
 
   Future<SeriesCredits> getSeriesCredits(int seriesId,int seasonNumber,int episodeNumber) async{
     return await apiService.fetchSeriesCredits(seriesId,seasonNumber,episodeNumber);
+  }
+
+  Future<SeriesRecommendations> getRecommendedSeries(int seriesId)async{
+    return await apiService.fetchRecommendedSeries(seriesId);
   }
 }

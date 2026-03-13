@@ -6,6 +6,7 @@ import 'package:grey_matter/model/tvShow/airing_today.dart';
 import 'package:grey_matter/model/tvShow/episode_list.dart';
 import 'package:grey_matter/model/tvShow/season_model.dart';
 import 'package:grey_matter/model/tvShow/seriesCast_model.dart';
+import 'package:grey_matter/model/tvShow/seriesRecommendations_model.dart';
 import 'package:grey_matter/model/tvShow/tvShowVideo_model.dart';
 import 'package:http/http.dart' as http;
 
@@ -136,6 +137,21 @@ class SeriesApiService {
       return SeriesCredits.fromJson(json);
     }else{
       throw Exception('Cant fetch Credits of the series');
+    }
+  }
+
+  Future<SeriesRecommendations> fetchRecommendedSeries(int seriesId) async{
+    final base_url = 'https://api.themoviedb.org/3/tv/$seriesId/recommendations';
+    final url = Uri.parse(base_url);
+    final response = await http.get(url,headers: {
+      'Authorization' : 'Bearer ${dotenv.env['MOVIE_API_ACCESS_KEY']}'
+    });
+
+    if(response.statusCode == 200){
+      final json = jsonDecode(response.body);
+      return SeriesRecommendations.fromJson(json);
+    }else{
+      throw Exception('Cant fetch Recommended Tv Shows');
     }
   }
 }

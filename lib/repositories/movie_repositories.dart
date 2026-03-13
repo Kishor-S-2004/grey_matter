@@ -10,6 +10,7 @@ import 'package:grey_matter/model/movie/movieRec_model.dart';
 import 'package:grey_matter/model/movie/movieVideo_model.dart';
 import 'package:grey_matter/model/movie/movie_model.dart';
 import 'package:grey_matter/model/movie/movie_review.dart';
+import 'package:grey_matter/model/movie/nowPlayingMovies_model.dart';
 import 'package:grey_matter/model/movie/searchmovie_model.dart';
 import 'package:grey_matter/model/movie/toprated_model.dart';
 import 'package:grey_matter/model/movie/upcoming_model.dart';
@@ -62,5 +63,9 @@ Future<CastDetails> getCastDetails(int personId)async{
 
 Future<SearchCast> getSearchedCast(String personName) async{
     return await apiService.fetchSearchedCast(personName);
+}
+
+Future<NowPlayingMovies> getNowPlayingMovies() async{
+    return await apiService.fetchNowPlayingMovie();
 }
 }

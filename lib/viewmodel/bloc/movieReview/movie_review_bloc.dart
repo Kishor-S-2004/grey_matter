@@ -23,6 +23,7 @@ class MovieReviewBloc extends Bloc<MovieReviewEvent, MovieReviewState> {
       }catch(e,s){
         log('Status: $s');
         log('Error: $e');
+        emit(MovieReviewError('$e'));
       }
     });
   }

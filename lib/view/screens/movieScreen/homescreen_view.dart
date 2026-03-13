@@ -1,12 +1,19 @@
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:grey_matter/view/theme/appcolor.dart';
 import 'package:grey_matter/view/widgets/homescreen_widgets.dart';
 import 'package:grey_matter/viewmodel/bloc/movie/movie_bloc.dart';
+import 'package:grey_matter/viewmodel/bloc/nowPlayingMovies/now_playing_movies_bloc.dart';
 import 'package:grey_matter/viewmodel/bloc/topratedmovie/topratedmovies_bloc.dart';
 import 'package:grey_matter/viewmodel/bloc/upcomingmovies/upcomingmovies_bloc.dart';
+import 'package:grey_matter/viewmodel/bloc/users/userDetails/userdetails_event.dart';
+
+import '../../../viewmodel/bloc/users/userDetails/userdetails_bloc.dart';
+import '../../../viewmodel/bloc/users/userDetails/userdetails_state.dart';
 
 // import '../../viewmodel/bloc/movie/movie_state.dart';
 
@@ -15,7 +22,10 @@ class HomescreenView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    final String _uid = FirebaseAuth.instance.currentUser!.uid;
+    return BlocProvider(
+      create: (context) => UserdetailsBloc()..add(UserdetailsEvent.userDetails(_uid)),
+      child: Scaffold(
         appBar: AppBar(
           backgroundColor: Appcolor.background,
           leadingWidth: 45,
@@ -24,42 +34,37 @@ class HomescreenView extends StatelessWidget {
             child: CircleAvatar(child: Icon(Icons.person), radius: 5),
           ),
           scrolledUnderElevation: 1,
-          title: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: CustomText(
-                  text: 'Hello, Smith',
-                  fW: FontWeight.bold,
-                  fS: 20,
+          title: BlocBuilder<UserdetailsBloc, UserdetailsState>(
+            builder: (context, state) {
+              return state.when(
+                initial: () => const SizedBox(),
+                loading: () => const SizedBox(),
+                loaded: (userData) => Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: CustomText(
+                        text: userData.Username!,
+                        fW: FontWeight.bold,
+                        fS: 20,
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: CustomText(
+                        text: "Let's stream your favourite movie",
+                        fW: FontWeight.w300,
+                        fS: 14,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              SizedBox(height: 5),
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: CustomText(
-                  text: "Let's stream your favourite movie",
-                  fW: FontWeight.w300,
-                  fS: 14,
-                ),
-              ),
-            ],
+                error: (error) => Text('$error'),
+              );
+            },
           ),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: Container(
-                height: 36,
-                width: 36,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  color: Appcolor.background,
-                ),
-                child: Icon(Icons.favorite, color: Colors.red),
-              ),
-            ),
-          ],
         ),
         body: BlocBuilder<MovieBloc, MovieState>(
           builder: (context, state) {
@@ -69,35 +74,70 @@ class HomescreenView extends StatelessWidget {
 
             if (state is MovieLoaded) {
               return SingleChildScrollView(
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: 14,),
+                    SizedBox(height: 14),
                     CustomSearchBar(),
-                    SizedBox(height: 17,),
+                    SizedBox(height: 17),
                     BlocBuilder<UpcomingmoviesBloc, UpcomingmoviesState>(
                       builder: (context, state) {
-                        if(state is UpcomingMoviesLoading){
-                          return Center(child: CircularProgressIndicator(),);
+                        if (state is UpcomingMoviesLoading) {
+                          return Center(child: CircularProgressIndicator());
                         }
-                        if(state is UpcomingmoviesLoaded){
+                        if (state is UpcomingmoviesLoaded) {
                           return BasicCarousel(movies: state.upcomingModel);
-                        }  if(state is UpcomingmoviesError){
-                          return Center(child: Text(state.errorMsg),);
+                        }
+                        if (state is UpcomingmoviesError) {
+                          return Center(
+                            child: Text('${state.errorMsg} in upcming movies'),
+                          );
                         }
                         return SizedBox();
                       },
                     ),
-                    SizedBox(height: 20,),
                     // GenreList(),
-                    SizedBox(height: 17,),
+                    SizedBox(height: 17),
                     CustomText(
-                        text: 'Top Rated', fW: FontWeight.bold, fS: 20),
-                    SizedBox(height: 17,),
+                      text: 'Now Playing',
+                      fW: FontWeight.bold,
+                      fS: 20,
+                    ),
+                    SizedBox(height: 17),
+                    BlocBuilder<NowPlayingMoviesBloc, NowPlayingMoviesState>(
+                      builder: (context, nowPlayingMovieState) {
+                        if (nowPlayingMovieState is NowPlayingMoviesLoading) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+
+                        if (nowPlayingMovieState is NowPlayingMoviesLoaded) {
+                          return NowPlayingMovieList(
+                            movies: nowPlayingMovieState.nowPlayingMovieResult,
+                          );
+                        }
+
+                        if (nowPlayingMovieState is NowPlayingMoviesError) {
+                          return Center(
+                            child: Text(
+                              '${nowPlayingMovieState
+                                  .errorMessage} in now Playing',
+                            ),
+                          );
+                        }
+
+                        return const Text('Error');
+                      },
+                    ),
+                    CustomText(text: 'Top Rated', fW: FontWeight.bold, fS: 20),
+                    SizedBox(height: 17),
                     BlocBuilder<TopratedmoviesBloc, TopratedmoviesState>(
                       builder: (context, topRatedMovieState) {
                         if (topRatedMovieState is TopratedmoviesLoading) {
                           return const Center(
-                              child: CircularProgressIndicator());
+                            child: CircularProgressIndicator(),
+                          );
                         }
 
                         if (topRatedMovieState is TopratedmoviesLoaded) {
@@ -107,15 +147,22 @@ class HomescreenView extends StatelessWidget {
                         }
 
                         if (topRatedMovieState is TopratedmoviesError) {
-                          return Center(child: Text(topRatedMovieState.errorMsg));
+                          return Center(
+                            child: Text(
+                              '${topRatedMovieState.errorMsg} in top Rated',
+                            ),
+                          );
                         }
 
                         return const Text('Error');
                       },
                     ),
                     CustomText(
-                        text: 'Most Popular', fW: FontWeight.bold, fS: 20),
-                    SizedBox(height: 17,),
+                      text: 'Most Popular',
+                      fW: FontWeight.bold,
+                      fS: 20,
+                    ),
+                    SizedBox(height: 17),
                     PopularMovieList(movies: state.movies),
                   ],
                 ),
@@ -123,14 +170,14 @@ class HomescreenView extends StatelessWidget {
             }
 
             if (state is MovieError) {
-              log('${state.errormsg}');
+              log('${state.errormsg} in popular movie');
               return Center(child: Text(state.errormsg));
             }
 
             return const SizedBox();
           },
-        )
-
+        ),
+      ),
     );
   }
 }

@@ -10,7 +10,7 @@ class MovieInitial extends MovieState {}
 class MovieLoading extends MovieState {}
 
 class MovieLoaded extends MovieState {
-  final List<Result> movies;
+  final List<Result>? movies;
   MovieLoaded(this.movies);
 }
 

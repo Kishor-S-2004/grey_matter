@@ -8,7 +8,7 @@ final class MovieReviewInitial extends MovieReviewState {}
 final class MovieReviewLoading extends MovieReviewState {}
 
 final class MovieReviewLoaded extends MovieReviewState {
-  final List<MovieReviewResuts> reviewResult;
+  final List<MovieReviewResults> reviewResult;
   MovieReviewLoaded(this.reviewResult);
 }
 

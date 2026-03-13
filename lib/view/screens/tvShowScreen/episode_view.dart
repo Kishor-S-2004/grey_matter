@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:grey_matter/view/theme/appcolor.dart';
 import 'package:grey_matter/view/widgets/tv_show_widgets.dart';
 import 'package:grey_matter/viewmodel/bloc/episodes/episodes_bloc.dart';
 
@@ -13,6 +14,7 @@ class EpisodeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Appcolor.background,
         leading: GestureDetector(onTap: () {
           Navigator.pop(context);
         },child: Icon(Icons.arrow_back)),

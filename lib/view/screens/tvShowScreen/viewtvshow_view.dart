@@ -7,6 +7,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:grey_matter/api_service/movie_apiservice.dart';
 import 'package:grey_matter/api_service/tv_show_apiservice.dart';
 import 'package:grey_matter/repositories/movie_repositories.dart';
+import 'package:grey_matter/view/theme/appcolor.dart';
+import 'package:grey_matter/view/widgets/tv_show_widgets.dart';
 import 'package:grey_matter/viewmodel/bloc/seriesCredits/series_credits_bloc.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
@@ -65,6 +67,9 @@ class _TvShowPlayingScreenState extends State<TvShowPlayingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Appcolor.background ,
+      ),
       body: BlocBuilder<TvShowVideoBloc, TvShowVideoState>(
         builder: (context, state) {
           if (state is TvShowVideoLoading) {
@@ -72,7 +77,7 @@ class _TvShowPlayingScreenState extends State<TvShowPlayingScreen> {
           }
 
           if (state is TvShowVideoLoaded) {
-            /// ✅ Filter only YouTube videos (ENUM SAFE)
+
             final youtubeVideos = state.results
                 .where((e) => e.site == Site.YOU_TUBE)
                 .toList();
@@ -96,7 +101,7 @@ class _TvShowPlayingScreenState extends State<TvShowPlayingScreen> {
               _currentVideoKey = trailerKey;
               _controller?.close();
               _controller = YoutubePlayerController.fromVideoId(
-                videoId: trailerKey!,
+                videoId: trailerKey,
                 autoPlay: true,
                 params: const YoutubePlayerParams(
                   mute: false,
@@ -124,6 +129,8 @@ class _TvShowPlayingScreenState extends State<TvShowPlayingScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+
+                      // SizedBox(height: 30,),
                       player,
 
                       const SizedBox(height: 10),
@@ -154,7 +161,6 @@ class _TvShowPlayingScreenState extends State<TvShowPlayingScreen> {
 
                       const SizedBox(height: 16),
 
-                      /// ✅ Series Cast
                       BlocBuilder<SeriesCreditsBloc, SeriesCreditsState>(
                         builder: (context, creditState) {
                           if (creditState is SeriesCreditsLoading) {
@@ -211,9 +217,7 @@ class _TvShowPlayingScreenState extends State<TvShowPlayingScreen> {
                                           },
                                           child: CircleAvatar(
                                             radius: 40,
-                                            backgroundImage: NetworkImage(
-                                              imageUrl,
-                                            ),
+                                            backgroundImage: NetworkImage(imageUrl,),
                                             onBackgroundImageError: (_, __) {},
                                           ),
                                         ),
@@ -258,6 +262,20 @@ class _TvShowPlayingScreenState extends State<TvShowPlayingScreen> {
                           return const SizedBox.shrink();
                         },
                       ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(
+                          'Recommended TvShow',
+                          style: GoogleFonts.gabriela(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 14),
+
+
+                      RecommendedSeriesList(seriesId: widget.seriesId,)
                     ],
                   ),
                 );

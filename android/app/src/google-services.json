@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1016125898247",
+    "project_id": "greymatter-be35c",
+    "storage_bucket": "greymatter-be35c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1016125898247:android:8182aea3351db9e1d7f4a2",
+        "android_client_info": {
+          "package_name": "com.example.grey_matter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVufORl4VmZJObj_JrKOSfoK6KwM173YQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
