@@ -164,7 +164,7 @@ class _BasicCarouselState extends State<BasicCarousel> {
                       borderRadius: BorderRadius.circular(16),
                       child: Image.network(
                         imageUrl,
-                        fit: BoxFit.cover,
+                        fit: BoxFit.fill,
                         width: double.infinity,
                         height: double.infinity,
                         errorBuilder: (context, error, stackTrace) {
@@ -637,11 +637,14 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                 controller: _controller,
                 decoration: InputDecoration(
                   hintText: 'Search a movie...',
-                  prefixIcon: const Icon(Icons.search),
+                  prefixIcon: const Icon(Icons.search,),
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 14,
                     vertical: 10,
-                  ),
+                  ),focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Appcolor.primary),),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey,),borderRadius: BorderRadius.circular(12)
+                  ),enabled: true,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -1043,6 +1046,7 @@ class _NowPlayingMovieListState extends State<NowPlayingMovieList> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // CircularProgressIndicator(color: Appcolor.primary,padding: EdgeInsets.symmetric(vertical: 130),),
                       GestureDetector(
                         onTap: () {
                           Navigator.push(

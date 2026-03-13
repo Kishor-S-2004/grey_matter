@@ -440,8 +440,8 @@ class _MoviedetailsState extends State<Moviedetails> {
             ),
           ),
           Positioned(
-            left: 15,
-            top: 18,
+            left: 20,
+            top: 40,
             child: GestureDetector(
               onTap: () {
                 Navigator.pop(context);

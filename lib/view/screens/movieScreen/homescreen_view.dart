@@ -17,14 +17,37 @@ import '../../../viewmodel/bloc/users/userDetails/userdetails_state.dart';
 
 // import '../../viewmodel/bloc/movie/movie_state.dart';
 
-class HomescreenView extends StatelessWidget {
-  const HomescreenView({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  // late Animation<double> animation;
+  // late AnimationController controller;
+  //
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   controller =
+  //       AnimationController(duration: const Duration(seconds: 2), vsync: DrawerControllerState());
+  //   animation = Tween<double>(begin: 0, end: 300).animate(controller)
+  //     ..addListener(() {
+  //       setState(() {
+  //         // The state that has changed here is the animation object's value.
+  //       });
+  //     });
+  //   controller.forward();
+  // }
 
   @override
   Widget build(BuildContext context) {
     final String _uid = FirebaseAuth.instance.currentUser!.uid;
     return BlocProvider(
-      create: (context) => UserdetailsBloc()..add(UserdetailsEvent.userDetails(_uid)),
+      create: (context) =>
+      UserdetailsBloc()..add(UserdetailsEvent.userDetails(_uid)),
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Appcolor.background,
@@ -69,7 +92,10 @@ class HomescreenView extends StatelessWidget {
         body: BlocBuilder<MovieBloc, MovieState>(
           builder: (context, state) {
             if (state is MovieLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator(
+                color: Appcolor.primary,
+                padding: EdgeInsets.symmetric(vertical: 130),
+              ),);
             }
 
             if (state is MovieLoaded) {
@@ -83,7 +109,12 @@ class HomescreenView extends StatelessWidget {
                     BlocBuilder<UpcomingmoviesBloc, UpcomingmoviesState>(
                       builder: (context, state) {
                         if (state is UpcomingMoviesLoading) {
-                          return Center(child: CircularProgressIndicator());
+                          return Center(
+                            child: CircularProgressIndicator(
+                              color: Appcolor.primary,
+                              padding: EdgeInsets.symmetric(vertical: 150),
+                            ),
+                          );
                         }
                         if (state is UpcomingmoviesLoaded) {
                           return BasicCarousel(movies: state.upcomingModel);
@@ -108,7 +139,10 @@ class HomescreenView extends StatelessWidget {
                       builder: (context, nowPlayingMovieState) {
                         if (nowPlayingMovieState is NowPlayingMoviesLoading) {
                           return const Center(
-                            child: CircularProgressIndicator(),
+                            child: CircularProgressIndicator(
+                              color: Appcolor.primary,
+                              padding: EdgeInsets.symmetric(vertical: 130),
+                            ),
                           );
                         }
 
@@ -121,8 +155,7 @@ class HomescreenView extends StatelessWidget {
                         if (nowPlayingMovieState is NowPlayingMoviesError) {
                           return Center(
                             child: Text(
-                              '${nowPlayingMovieState
-                                  .errorMessage} in now Playing',
+                              '${nowPlayingMovieState.errorMessage} in now Playing',
                             ),
                           );
                         }
@@ -136,7 +169,10 @@ class HomescreenView extends StatelessWidget {
                       builder: (context, topRatedMovieState) {
                         if (topRatedMovieState is TopratedmoviesLoading) {
                           return const Center(
-                            child: CircularProgressIndicator(),
+                            child: CircularProgressIndicator(
+                              color: Appcolor.primary,
+                              padding: EdgeInsets.symmetric(vertical: 130),
+                            ),
                           );
                         }
 

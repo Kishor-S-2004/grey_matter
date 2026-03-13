@@ -595,6 +595,8 @@ class _TvShowSearchBarState extends State<TvShowSearchBar> {
                     horizontal: 14,
                     vertical: 10,
                   ),
+                  focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Appcolor.primary)),
+                  enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.grey),borderRadius: BorderRadius.circular(12)),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),

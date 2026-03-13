@@ -13,7 +13,7 @@ class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
 
   static final pages = [
-    HomescreenView(),
+    HomeScreen(),
     Series(),
   ];
 
