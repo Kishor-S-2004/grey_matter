@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_skeleton_ui/flutter_skeleton_ui.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:grey_matter/api_service/movie_apiservice.dart';
 import 'package:grey_matter/model/movie/movieRec_model.dart';
@@ -57,7 +58,6 @@ class CustomText extends StatelessWidget {
   }
 }
 
-
 class BasicCarousel extends StatefulWidget {
   final List<Results>? movies;
 
@@ -83,7 +83,7 @@ class _BasicCarouselState extends State<BasicCarousel> {
           final date = movie.releaseDate;
           return date != null && date.year > 2025;
         }).toList() ??
-            [];
+        [];
   }
 
   @override
@@ -121,7 +121,7 @@ class _BasicCarouselState extends State<BasicCarousel> {
             ),
             items: filteredMovies.map((movie) {
               final imageUrl =
-              (movie.posterPath != null && movie.posterPath!.isNotEmpty)
+                  (movie.posterPath != null && movie.posterPath!.isNotEmpty)
                   ? 'https://image.tmdb.org/t/p/w500${movie.posterPath}'
                   : 'https://via.placeholder.com/500x750';
 
@@ -134,50 +134,69 @@ class _BasicCarouselState extends State<BasicCarousel> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => BlocProvider(
-                        create: (context) => CredtisBloc(movieRepositories)
-                          ..add(FetchCreditDetails(movie.id ?? 0)),
-                        child: BlocProvider(
-                          create: (context) =>
-                              FavMovieBloc(repository: FavMovieRepository()),
-                          child: Moviedetails(
-                            movieId: movie.id ?? 0,
-                            movieName: movie.title ?? "Unknown",
-                            movieGenre: genreNames.isNotEmpty
-                                ? genreNames.first
-                                : "Unknown",
-                            movieDescritpion:
-                            movie.overview ?? "No overview",
-                            posterPath: imageUrl,
-                            releaseDate: movie.releaseDate?.year ?? 0,
-                            voteAverage: movie.voteAverage ?? 0.0,
-                          ),
-                        ),
+                    PageRouteBuilder(
+                      transitionDuration: const Duration(milliseconds: 900),
+                      reverseTransitionDuration: const Duration(
+                        milliseconds: 600,
                       ),
+                      pageBuilder: (context, animation, secondaryAnimation) =>
+                          BlocProvider(
+                            create: (context) =>
+                                CredtisBloc(movieRepositories)
+                                  ..add(FetchCreditDetails(movie.id ?? 0)),
+                            child: BlocProvider(
+                              create: (context) => FavMovieBloc(
+                                repository: FavMovieRepository(),
+                              ),
+                              child: Moviedetails(
+                                heroTag: 'movie_${movie.id}',
+                                movieId: movie.id ?? 0,
+                                movieName: movie.title ?? "Unknown",
+                                movieGenre: genreNames.isNotEmpty
+                                    ? genreNames.first
+                                    : "Unknown",
+                                movieDescritpion:
+                                    movie.overview ?? "No overview",
+                                posterPath: imageUrl,
+                                releaseDate: movie.releaseDate?.year ?? 0,
+                                voteAverage: movie.voteAverage ?? 0.0,
+                              ),
+                            ),
+                          ),
+
+                      transitionsBuilder:
+                          (context, animation, secondaryAnimation, child) {
+                            return FadeTransition(
+                              opacity: animation,
+                              child: child,
+                            );
+                          },
                     ),
                   );
                 },
                 child: Stack(
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: Image.network(
-                        imageUrl,
-                        fit: BoxFit.fill,
-                        width: double.infinity,
-                        height: double.infinity,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            color: Colors.grey,
-                            child: const Center(
-                              child: Icon(
-                                Icons.broken_image,
-                                color: Colors.white,
+                    Hero(
+                      tag: 'movie_${movie.id}',
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: Image.network(
+                          imageUrl,
+                          fit: BoxFit.fill,
+                          width: double.infinity,
+                          height: double.infinity,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              color: Colors.grey,
+                              child: const Center(
+                                child: Icon(
+                                  Icons.broken_image,
+                                  color: Colors.white,
+                                ),
                               ),
-                            ),
-                          );
-                        },
+                            );
+                          },
+                        ),
                       ),
                     ),
 
@@ -317,7 +336,7 @@ class _PopularMovieListState extends State<PopularMovieList> {
     }
 
     return SizedBox(
-      height: 330,
+      height: 300,
       child: BlocBuilder<GenreBloc, GenreState>(
         builder: (context, state) {
           if (state is! GenreLoaded) return const SizedBox();
@@ -345,74 +364,98 @@ class _PopularMovieListState extends State<PopularMovieList> {
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                 child: GestureDetector(
                   onTap: () {
-                    setState(() {
-                      tappedIndex = isTapped ? null : index;
-                    });
-
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (_) => BlocProvider(
-                          create: (context) =>
-                              CredtisBloc(movieRepository)
-                                ..add(FetchCreditDetails(movie.id!)),
-                          child: BlocProvider(
-                            create: (context) =>
-                                FavMovieBloc(repository: FavMovieRepository()),
-                            child: Moviedetails(
-                              movieId: movie.id!,
-                              movieName: movie.title!,
-                              movieGenre: genreNames.isNotEmpty
-                                  ? genreNames.first
-                                  : "Unknown",
-                              movieDescritpion: movie.overview!,
-                              posterPath: imageUrl,
-                              releaseDate: movie.releaseDate!.year,
-                              voteAverage: movie.voteAverage!,
-                            ),
-                          ),
+                      PageRouteBuilder(
+                        transitionDuration: const Duration(milliseconds: 900),
+                        reverseTransitionDuration: const Duration(
+                          milliseconds: 600,
                         ),
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            BlocProvider(
+                              create: (context) =>
+                                  CredtisBloc(movieRepository)
+                                    ..add(FetchCreditDetails(movie.id ?? 0)),
+                              child: BlocProvider(
+                                create: (context) => FavMovieBloc(
+                                  repository: FavMovieRepository(),
+                                ),
+                                child: Moviedetails(
+                                  heroTag: 'movie_${movie.id}',
+                                  movieId: movie.id ?? 0,
+                                  movieName: movie.title ?? "Unknown",
+                                  movieGenre: genreNames.isNotEmpty
+                                      ? genreNames.first
+                                      : "Unknown",
+                                  movieDescritpion:
+                                      movie.overview ?? "No overview",
+                                  posterPath: imageUrl,
+                                  releaseDate: movie.releaseDate?.year ?? 0,
+                                  voteAverage: movie.voteAverage ?? 0.0,
+                                ),
+                              ),
+                            ),
+
+                        transitionsBuilder:
+                            (context, animation, secondaryAnimation, child) {
+                              return FadeTransition(
+                                opacity: animation,
+                                child: child,
+                              );
+                            },
                       ),
                     );
                   },
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        height: 240,
-                        width: MediaQuery.of(context).size.width * 0.4,
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color(0xFFE7BC0F),
-                              blurRadius: 8,
-                              blurStyle: BlurStyle.outer,
+                      Hero(
+                        tag: 'movie_${movie.id}',
+                        child: Container(
+                          height: 220,
+                          width: MediaQuery.of(context).size.width * 0.33,
+                          decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                color: Color(0xFFE7BC0F),
+                                blurRadius: 8,
+                                blurStyle: BlurStyle.outer,
+                              ),
+                            ],
+                            borderRadius: BorderRadius.circular(10),
+                            image: DecorationImage(
+                              image: NetworkImage(imageUrl),
+                              fit: BoxFit.cover,
                             ),
-                          ],
-                          borderRadius: BorderRadius.circular(16),
-                          image: DecorationImage(
-                            image: NetworkImage(imageUrl),
-                            fit: BoxFit.cover,
                           ),
                         ),
                       ),
                       const SizedBox(height: 8),
                       SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.42,
+                        width: MediaQuery.of(context).size.width * 0.3,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 250),
-                              child: Text(
-                                isTapped ? movie.originalTitle! : movie.title!,
-                                key: ValueKey(isTapped),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.gabriela(
-                                  fontWeight: FontWeight.w600,
-                                  color: Appcolor.primary,
-                                  fontSize: 14,
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  tappedIndex = isTapped ? null : index;
+                                });
+                              },
+                              child: AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 250),
+                                child: Text(
+                                  isTapped
+                                      ? movie.originalTitle!
+                                      : movie.title!,
+                                  key: ValueKey(isTapped),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.gabriela(
+                                    fontWeight: FontWeight.w600,
+                                    color: Appcolor.primary,
+                                    fontSize: 14,
+                                  ),
                                 ),
                               ),
                             ),
@@ -467,7 +510,7 @@ class _TopRatedMovieListState extends State<TopRatedMovieList> {
     }
 
     return SizedBox(
-      height: 340,
+      height: 300,
       child: BlocBuilder<GenreBloc, GenreState>(
         builder: (context, state) {
           if (state is! GenreLoaded) {
@@ -495,47 +538,69 @@ class _TopRatedMovieListState extends State<TopRatedMovieList> {
 
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      tappedIndex = isTapped ? null : index;
-                    });
-                  },
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => BlocProvider(
-                                create: (context) => CredtisBloc(
-                                  movieRepositories,
-                                )..add(FetchCreditDetails(upcomingMovie.id)),
-                                child: BlocProvider(
-                                  create: (context) => FavMovieBloc(
-                                    repository: FavMovieRepository(),
-                                  ),
-                                  child: Moviedetails(
-                                    movieId: upcomingMovie.id,
-                                    movieName: upcomingMovie.title,
-                                    movieGenre: genreNames.isNotEmpty
-                                        ? genreNames.first
-                                        : "Unknown",
-                                    movieDescritpion: upcomingMovie.overview,
-                                    posterPath: imageUrl,
-                                    releaseDate: upcomingMovie.releaseDate.year,
-                                    voteAverage: upcomingMovie.voteAverage,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            transitionDuration: const Duration(
+                              milliseconds: 900,
+                            ),
+                            reverseTransitionDuration: const Duration(
+                              milliseconds: 600,
+                            ),
+                            pageBuilder:
+                                (
+                                  context,
+                                  animation,
+                                  secondaryAnimation,
+                                ) => BlocProvider(
+                                  create: (context) => CredtisBloc(
+                                    movieRepositories,
+                                  )..add(FetchCreditDetails(upcomingMovie.id)),
+                                  child: BlocProvider(
+                                    create: (context) => FavMovieBloc(
+                                      repository: FavMovieRepository(),
+                                    ),
+                                    child: Moviedetails(
+                                      heroTag: 'movie_${upcomingMovie.id}',
+                                      movieId: upcomingMovie.id,
+                                      movieName: upcomingMovie.title,
+                                      movieGenre: genreNames.isNotEmpty
+                                          ? genreNames.first
+                                          : "Unknown",
+                                      movieDescritpion: upcomingMovie.overview,
+                                      posterPath: imageUrl,
+                                      releaseDate:
+                                          upcomingMovie.releaseDate.year,
+                                      voteAverage: upcomingMovie.voteAverage,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
-                          );
-                        },
+
+                            transitionsBuilder:
+                                (
+                                  context,
+                                  animation,
+                                  secondaryAnimation,
+                                  child,
+                                ) {
+                                  return FadeTransition(
+                                    opacity: animation,
+                                    child: child,
+                                  );
+                                },
+                          ),
+                        );
+                      },
+                      child: Hero(
+                        tag: 'movie_${upcomingMovie.id}',
                         child: Container(
-                          height: 240,
-                          width: MediaQuery.of(context).size.width * 0.4,
+                          height: 220,
+                          width: MediaQuery.of(context).size.width * 0.33,
                           decoration: BoxDecoration(
                             boxShadow: [
                               BoxShadow(
@@ -544,7 +609,7 @@ class _TopRatedMovieListState extends State<TopRatedMovieList> {
                                 blurStyle: BlurStyle.outer,
                               ),
                             ],
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(10),
                             image: DecorationImage(
                               image: NetworkImage(imageUrl),
                               fit: BoxFit.cover,
@@ -552,20 +617,27 @@ class _TopRatedMovieListState extends State<TopRatedMovieList> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.42,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            AnimatedSwitcher(
+                    ),
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.3,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                tappedIndex = isTapped ? null : index;
+                              });
+                            },
+                            child: AnimatedSwitcher(
                               duration: const Duration(milliseconds: 250),
                               child: Text(
                                 isTapped
                                     ? upcomingMovie.originalTitle
                                     : upcomingMovie.title,
                                 key: ValueKey(isTapped),
-                                maxLines: 2,
+                                maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.gabriela(
                                   fontWeight: FontWeight.w600,
@@ -574,23 +646,23 @@ class _TopRatedMovieListState extends State<TopRatedMovieList> {
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              genreNames.isNotEmpty
-                                  ? genreNames.join(',')
-                                  : "Unknown",
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.gabriela(
-                                fontSize: 10,
-                                color: Colors.grey,
-                              ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            genreNames.isNotEmpty
+                                ? genreNames.join(',')
+                                : "Unknown",
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.gabriela(
+                              fontSize: 10,
+                              color: Colors.grey,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               );
             },
@@ -637,14 +709,19 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                 controller: _controller,
                 decoration: InputDecoration(
                   hintText: 'Search a movie...',
-                  prefixIcon: const Icon(Icons.search,),
+                  prefixIcon: const Icon(Icons.search),
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 14,
                     vertical: 10,
-                  ),focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Appcolor.primary),),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Appcolor.primary),
+                  ),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey,),borderRadius: BorderRadius.circular(12)
-                  ),enabled: true,
+                    borderSide: BorderSide(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  enabled: true,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -713,26 +790,55 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                             );
                             Navigator.push(
                               context,
-                              MaterialPageRoute(
-                                builder: (context) => BlocProvider(
-                                  create: (context) =>
-                                      CredtisBloc(repositories)
-                                        ..add(FetchCreditDetails(movie.id)),
-                                  child: BlocProvider(
-                                    create: (context) => FavMovieBloc(
-                                      repository: FavMovieRepository(),
-                                    ),
-                                    child: Moviedetails(
-                                      movieId: movie.id,
-                                      movieName: movie.title!,
-                                      movieGenre: genre.join(','),
-                                      movieDescritpion: movie.overview,
-                                      posterPath: imageUrl,
-                                      releaseDate: movie.releaseDate?.year,
-                                      voteAverage: movie.voteAverage,
-                                    ),
-                                  ),
+                              PageRouteBuilder(
+                                transitionDuration: const Duration(
+                                  milliseconds: 900,
                                 ),
+                                reverseTransitionDuration: const Duration(
+                                  milliseconds: 600,
+                                ),
+                                pageBuilder:
+                                    (
+                                      context,
+                                      animation,
+                                      secondaryAnimation,
+                                    ) => BlocProvider(
+                                      create: (context) => CredtisBloc(
+                                        repositories,
+                                      )..add(FetchCreditDetails(movie.id ?? 0)),
+                                      child: BlocProvider(
+                                        create: (context) => FavMovieBloc(
+                                          repository: FavMovieRepository(),
+                                        ),
+                                        child: Moviedetails(
+                                          heroTag: 'movie_${movie.id}',
+                                          movieId: movie.id ?? 0,
+                                          movieName: movie.title ?? "Unknown",
+                                          movieGenre: genre.isNotEmpty
+                                              ? genre.first
+                                              : "Unknown",
+                                          movieDescritpion:
+                                              movie.overview ?? "No overview",
+                                          posterPath: imageUrl,
+                                          releaseDate:
+                                              movie.releaseDate?.year ?? 0,
+                                          voteAverage: movie.voteAverage ?? 0.0,
+                                        ),
+                                      ),
+                                    ),
+
+                                transitionsBuilder:
+                                    (
+                                      context,
+                                      animation,
+                                      secondaryAnimation,
+                                      child,
+                                    ) {
+                                      return FadeTransition(
+                                        opacity: animation,
+                                        child: child,
+                                      );
+                                    },
                               ),
                             );
                           },
@@ -740,43 +846,46 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                             padding: const EdgeInsets.symmetric(
                               horizontal: 14.0,
                             ),
-                            child: Container(
-                              padding: const EdgeInsets.all(6),
-                              margin: const EdgeInsets.symmetric(vertical: 2),
-                              decoration: BoxDecoration(
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Appcolor.primary,
-                                    blurRadius: 2,
-                                    blurStyle: BlurStyle.outer,
-                                  ),
-                                ],
-                                color: Appcolor.background,
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: Row(
-                                children: [
-                                  if (imageUrl.isNotEmpty)
-                                    Image.network(
-                                      imageUrl,
-                                      height: 50,
-                                      width: 35,
-                                      fit: BoxFit.cover,
+                            child: Hero(
+                              tag: 'movie_${movie.id}',
+                              child: Container(
+                                padding: const EdgeInsets.all(6),
+                                margin: const EdgeInsets.symmetric(vertical: 2),
+                                decoration: BoxDecoration(
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Appcolor.primary,
+                                      blurRadius: 2,
+                                      blurStyle: BlurStyle.outer,
                                     ),
-                                  const SizedBox(width: 10),
-                                  if (imageUrl.isNotEmpty)
-                                    Expanded(
-                                      child: Text(
-                                        movie.title!,
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 14,
-                                        ),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
+                                  ],
+                                  color: Appcolor.background,
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Row(
+                                  children: [
+                                    if (imageUrl.isNotEmpty)
+                                      Image.network(
+                                        imageUrl,
+                                        height: 50,
+                                        width: 35,
+                                        fit: BoxFit.cover,
                                       ),
-                                    ),
-                                ],
+                                    const SizedBox(width: 10),
+                                    if (imageUrl.isNotEmpty)
+                                      Expanded(
+                                        child: Text(
+                                          movie.title!,
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 14,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
@@ -811,11 +920,50 @@ class _RecommendationMovieListState extends State<RecommendationMovieList> {
     final MovieRepositories repositories = MovieRepositories(MovieApiservice());
 
     return SizedBox(
-      height: 350,
+      height: 330,
       child: BlocBuilder<MovieRecommendationBloc, MovieRecommendationState>(
         builder: (context, state) {
           if (state is MovieRecommendationLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return SizedBox(
+              height: 320,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: 10,
+                itemBuilder: (context, index) {
+                  return SkeletonItem(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SkeletonAvatar(
+                          style: SkeletonAvatarStyle(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            borderRadius: BorderRadius.circular(10),
+                            width: MediaQuery.of(context).size.width * 0.4,
+                            height: 240,
+                          ),
+                        ),
+
+                        const SizedBox(height: 8),
+
+                        SkeletonParagraph(
+                          style: SkeletonParagraphStyle(
+                            lines: 2,
+                            spacing: 6,
+                            lineStyle: SkeletonLineStyle(
+                              randomLength: true,
+                              height: 10,
+                              borderRadius: BorderRadius.circular(8),
+                              minLength: MediaQuery.of(context).size.width / 6,
+                              maxLength: MediaQuery.of(context).size.width / 3,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            );
           }
 
           if (state is MovieRecommendationLoaded) {
@@ -865,55 +1013,94 @@ class _RecommendationMovieListState extends State<RecommendationMovieList> {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              Navigator.push(
+                              Navigator.pushReplacement(
                                 context,
-                                MaterialPageRoute(
-                                  builder: (context) => BlocProvider(
-                                    create: (context) =>
-                                        CredtisBloc(repositories)..add(
-                                          FetchCreditDetails(
-                                            recommendationResult.id,
+                                PageRouteBuilder(
+                                  transitionDuration: const Duration(
+                                    milliseconds: 900,
+                                  ),
+                                  reverseTransitionDuration: const Duration(
+                                    milliseconds: 600,
+                                  ),
+                                  pageBuilder:
+                                      (
+                                        context,
+                                        animation,
+                                        secondaryAnimation,
+                                      ) => BlocProvider(
+                                        create: (context) =>
+                                            CredtisBloc(repositories)..add(
+                                              FetchCreditDetails(
+                                                recommendationResult.id ?? 0,
+                                              ),
+                                            ),
+                                        child: BlocProvider(
+                                          create: (context) => FavMovieBloc(
+                                            repository: FavMovieRepository(),
+                                          ),
+                                          child: Moviedetails(
+                                            heroTag:
+                                                'movie_${recommendationResult.id}',
+                                            movieId:
+                                                recommendationResult.id ?? 0,
+                                            movieName:
+                                                recommendationResult.title ??
+                                                "Unknown",
+                                            movieGenre: genreNames.isNotEmpty
+                                                ? genreNames.first
+                                                : "Unknown",
+                                            movieDescritpion:
+                                                recommendationResult.overview ??
+                                                "No overview",
+                                            posterPath: imageUrl,
+                                            releaseDate:
+                                                recommendationResult
+                                                    .releaseDate
+                                                    ?.year ??
+                                                0,
+                                            voteAverage:
+                                                recommendationResult
+                                                    .voteAverage ??
+                                                0.0,
                                           ),
                                         ),
-                                    child: BlocProvider(
-                                      create: (context) => FavMovieBloc(repository: FavMovieRepository()),
-                                      child: Moviedetails(
-                                        movieId: recommendationResult.id,
-                                        movieName: recommendationResult.title,
-                                        movieGenre: genreText,
-                                        movieDescritpion:
-                                            recommendationResult.overview,
-                                        posterPath: imageUrl,
-                                        releaseDate:
-                                            recommendationResult
-                                                .releaseDate
-                                                ?.year ??
-                                            0,
-                                        voteAverage:
-                                            recommendationResult.voteAverage,
                                       ),
-                                    ),
-                                  ),
+
+                                  transitionsBuilder:
+                                      (
+                                        context,
+                                        animation,
+                                        secondaryAnimation,
+                                        child,
+                                      ) {
+                                        return FadeTransition(
+                                          opacity: animation,
+                                          child: child,
+                                        );
+                                      },
                                 ),
                               );
                             },
-                            child: Container(
-                              height: 240,
-                              width: MediaQuery.of(context).size.width * 0.4,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Color(0xFFE7BC0F),
-                                    blurRadius: 8,
+                            child: Hero(
+                              tag: 'movie_${recommendationResult.id}',
+                              child: Container(
+                                height: 240,
+                                width: MediaQuery.of(context).size.width * 0.4,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Color(0xFFE7BC0F),
+                                      blurRadius: 8,
+                                    ),
+                                  ],
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(15),
+                                  child: Image.network(
+                                    imageUrl,
+                                    fit: BoxFit.cover,
                                   ),
-                                ],
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(15),
-                                child: Image.network(
-                                  imageUrl,
-                                  fit: BoxFit.cover,
                                 ),
                               ),
                             ),
@@ -939,7 +1126,7 @@ class _RecommendationMovieListState extends State<RecommendationMovieList> {
                                           ? recommendationResult.originalTitle
                                           : recommendationResult.title,
                                       key: ValueKey(isTapped),
-                                      maxLines: 3,
+                                      maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.gabriela(
                                         fontWeight: FontWeight.w600,
@@ -1008,7 +1195,7 @@ class _NowPlayingMovieListState extends State<NowPlayingMovieList> {
     }
 
     return SizedBox(
-      height: 330,
+      height: 300,
       child: BlocBuilder<GenreBloc, GenreState>(
         builder: (context, state) {
           if (state is! GenreLoaded) {
@@ -1036,50 +1223,68 @@ class _NowPlayingMovieListState extends State<NowPlayingMovieList> {
               final isTapped = tappedIndex == index;
 
               return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      tappedIndex = isTapped ? null : index;
-                    });
-                  },
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // CircularProgressIndicator(color: Appcolor.primary,padding: EdgeInsets.symmetric(vertical: 130),),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => BlocProvider(
-                                create: (context) =>
-                                    CredtisBloc(movieRepositories)
-                                      ..add(FetchCreditDetails(movie?.id ?? 0)),
-                                child: BlocProvider(
-                                  create: (context) => FavMovieBloc(
-                                    repository: FavMovieRepository(),
-                                  ),
-                                  child: Moviedetails(
-                                    movieId: movie?.id ?? 0,
-                                    movieName: movie?.title ?? "Unknown",
-                                    movieGenre: genreNames.isNotEmpty
-                                        ? genreNames.first
-                                        : "Unknown",
-                                    movieDescritpion:
-                                        movie?.overview ?? "No overview",
-                                    posterPath: imageUrl,
-                                    releaseDate: movie?.releaseDate?.year ?? 0,
-                                    voteAverage: movie?.voteAverage ?? 0.0,
-                                  ),
-                                ),
-                              ),
+                padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            transitionDuration: const Duration(
+                              milliseconds: 900,
                             ),
-                          );
-                        },
+                            reverseTransitionDuration: const Duration(
+                              milliseconds: 600,
+                            ),
+                            pageBuilder:
+                                (context, animation, secondaryAnimation) =>
+                                    BlocProvider(
+                                      create: (context) => CredtisBloc(
+                                        movieRepositories,
+                                      )..add(FetchCreditDetails(movie.id ?? 0)),
+                                      child: BlocProvider(
+                                        create: (context) => FavMovieBloc(
+                                          repository: FavMovieRepository(),
+                                        ),
+                                        child: Moviedetails(
+                                          heroTag: 'movie_${movie!.id}',
+                                          movieId: movie.id ?? 0,
+                                          movieName: movie.title ?? "Unknown",
+                                          movieGenre: genreNames.isNotEmpty
+                                              ? genreNames.first
+                                              : "Unknown",
+                                          movieDescritpion:
+                                              movie.overview ?? "No overview",
+                                          posterPath: imageUrl,
+                                          releaseDate:
+                                              movie.releaseDate?.year ?? 0,
+                                          voteAverage: movie.voteAverage ?? 0.0,
+                                        ),
+                                      ),
+                                    ),
+
+                            transitionsBuilder:
+                                (
+                                  context,
+                                  animation,
+                                  secondaryAnimation,
+                                  child,
+                                ) {
+                                  return FadeTransition(
+                                    opacity: animation,
+                                    child: child,
+                                  );
+                                },
+                          ),
+                        );
+                      },
+                      child: Hero(
+                        tag: 'movie_${movie?.id}',
                         child: Container(
-                          height: 240,
-                          width: MediaQuery.of(context).size.width * 0.4,
+                          height: 220,
+                          width: MediaQuery.of(context).size.width * 0.33,
                           decoration: BoxDecoration(
                             boxShadow: const [
                               BoxShadow(
@@ -1096,23 +1301,30 @@ class _NowPlayingMovieListState extends State<NowPlayingMovieList> {
                           ),
                         ),
                       ),
+                    ),
 
-                      const SizedBox(height: 8),
+                    const SizedBox(height: 8),
 
-                      /// 🎬 Title + Genre
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.42,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 250),
+                    /// 🎬 Title + Genre
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.2,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                tappedIndex = isTapped ? null : index;
+                              });
+                            },
+                            child: AnimatedSwitcher(
+                              duration: Duration(milliseconds: 250),
                               child: Text(
                                 isTapped
                                     ? movie?.originalTitle ?? "Unknown"
                                     : movie?.title ?? "Unknown",
                                 key: ValueKey(isTapped),
-                                maxLines: 2,
+                                maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.gabriela(
                                   fontWeight: FontWeight.w600,
@@ -1121,29 +1333,166 @@ class _NowPlayingMovieListState extends State<NowPlayingMovieList> {
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              genreNames.isNotEmpty
-                                  ? genreNames.join(', ')
-                                  : "Unknown",
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.gabriela(
-                                fontSize: 10,
-                                color: Colors.grey,
-                              ),
+                          ),
+
+                          const SizedBox(height: 4),
+
+                          Text(
+                            genreNames.isNotEmpty
+                                ? genreNames.join(', ')
+                                : "Unknown",
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.gabriela(
+                              fontSize: 10,
+                              color: Colors.grey,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               );
             },
           );
         },
       ),
+    );
+  }
+}
+
+class NewCarousel extends StatefulWidget {
+  final List<Results>? movies;
+
+  const NewCarousel({super.key, required this.movies});
+
+  @override
+  State<NewCarousel> createState() => _NewCarouselState();
+}
+
+class _NewCarouselState extends State<NewCarousel> {
+  late final List<Results> filteredMovies;
+
+  final MovieRepositories movieRepositories = MovieRepositories(
+    MovieApiservice(),
+  );
+
+  @override
+  void initState() {
+    super.initState();
+
+    filteredMovies =
+        widget.movies?.where((movie) {
+          final date = movie.releaseDate;
+          return date != null && date.year > 2025;
+        }).toList() ??
+        [];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (filteredMovies.isEmpty) {
+      return const SizedBox(
+        height: 250,
+        child: Center(
+          child: Text(
+            'No upcoming movies',
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+      );
+    }
+
+    return BlocBuilder<GenreBloc, GenreState>(
+      builder: (context, state) {
+        if (state is! GenreLoaded) {
+          return const SizedBox();
+        }
+
+        final allGenre = state.genres.genres;
+
+        return SizedBox(
+          width: MediaQuery.of(context).size.width,
+          child: CarouselSlider(
+            options: CarouselOptions(
+              height: 200,
+              autoPlay: true,
+              autoPlayInterval: const Duration(seconds: 4),
+              enlargeCenterPage: true,
+              animateToClosest: true,
+              viewportFraction: 0.80,
+            ),
+            items: filteredMovies.map((movie) {
+              final imageUrl = 'https://image.tmdb.org/t/p/w500${movie.posterPath}';
+
+              final errorIcon = Icon(Icons.image_not_supported,size: 30,);
+
+              final genreNames = allGenre
+                  .where((g) => movie.genreIds?.contains(g.id) ?? false)
+                  .map((genre) => genre.name)
+                  .toList();
+
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      transitionDuration: const Duration(milliseconds: 900),
+                      reverseTransitionDuration: const Duration(
+                        milliseconds: 600,
+                      ),
+                      pageBuilder: (context, animation, secondaryAnimation) =>
+                          BlocProvider(
+                            create: (context) =>
+                                CredtisBloc(movieRepositories)
+                                  ..add(FetchCreditDetails(movie.id ?? 0)),
+                            child: BlocProvider(
+                              create: (context) => FavMovieBloc(
+                                repository: FavMovieRepository(),
+                              ),
+                              child: Moviedetails(
+                                heroTag: 'movie_${movie.id}',
+                                movieId: movie.id ?? 0,
+                                movieName: movie.title ?? "Unknown",
+                                movieGenre: genreNames.isNotEmpty
+                                    ? genreNames.first
+                                    : "Unknown",
+                                movieDescritpion:
+                                    movie.overview ?? "No overview",
+                                posterPath: imageUrl,
+                                releaseDate: movie.releaseDate?.year ?? 0,
+                                voteAverage: movie.voteAverage ?? 0.0,
+                              ),
+                            ),
+                          ),
+
+                      transitionsBuilder:
+                          (context, animation, secondaryAnimation, child) {
+                            return FadeTransition(
+                              opacity: animation,
+                              child: child,
+                            );
+                          },
+                    ),
+                  );
+                },
+                child: Stack(
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: movie.posterPath != null ? ClipRRect(
+                        borderRadius: BorderRadiusGeometry.circular(12),
+                        child: Image.network(imageUrl, fit: BoxFit.fill),
+                      ) : Center(child: errorIcon),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+          ),
+        );
+      },
     );
   }
 }

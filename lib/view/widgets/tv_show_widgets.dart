@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_skeleton_ui/flutter_skeleton_ui.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:grey_matter/api_service/tv_show_apiservice.dart';
 import 'package:grey_matter/model/tvShow/airing_today.dart';
@@ -16,10 +17,14 @@ import 'package:grey_matter/viewmodel/bloc/recommendedSeries/recommended_series_
 import 'package:grey_matter/viewmodel/bloc/series_season/season_bloc.dart';
 import '../../viewmodel/bloc/airing_today/airingtoday_bloc.dart';
 import '../../viewmodel/bloc/genre/genre_bloc.dart';
+import '../../viewmodel/bloc/popularSeries/popular_series_bloc.dart';
+import '../../viewmodel/bloc/popularSeries/popular_series_state.dart';
 import '../../viewmodel/bloc/recommendedSeries/recommended_series_bloc.dart';
 import '../../viewmodel/bloc/recommendedSeries/recommended_series_state.dart';
 import '../../viewmodel/bloc/searchedTvShow/searched_tv_show_bloc.dart';
 import '../../viewmodel/bloc/top_rated_tvshow/top_rated_tv_show_bloc.dart';
+import '../../viewmodel/bloc/trendingSeries/trending_series_bloc.dart';
+import '../../viewmodel/bloc/trendingSeries/trending_series_state.dart';
 import '../../viewmodel/bloc/tvShowVideo/tv_show_video_bloc.dart';
 import '../../viewmodel/bloc/watchlist/watch_list_bloc.dart';
 import '../../viewmodel/bloc/watchlist/watch_list_event.dart';
@@ -36,11 +41,50 @@ class TvShowList extends StatelessWidget {
     return BlocBuilder<TopRatedTvShowBloc, TopRatedTvShowState>(
       builder: (context, state) {
         if (state is TopRatedTvShowLoading) {
-          return Center(child: CircularProgressIndicator());
+          return SizedBox(
+            height: 300,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: 10,
+              itemBuilder: (context, index) {
+                return SkeletonItem(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SkeletonAvatar(
+                        style: SkeletonAvatarStyle(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          borderRadius: BorderRadius.circular(10),
+                          width: MediaQuery.of(context).size.width * 0.4,
+                          height: 240,
+                        ),
+                      ),
+
+                      const SizedBox(height: 8),
+
+                      SkeletonParagraph(
+                        style: SkeletonParagraphStyle(
+                          lines: 2,
+                          spacing: 6,
+                          lineStyle: SkeletonLineStyle(
+                            randomLength: true,
+                            height: 10,
+                            borderRadius: BorderRadius.circular(8),
+                            minLength: MediaQuery.of(context).size.width / 6,
+                            maxLength: MediaQuery.of(context).size.width / 3,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          );
         }
         if (state is TopRatedTvShowLoaded) {
           return SizedBox(
-            height: 320,
+            height: 270,
             child: ListView.builder(
               shrinkWrap: true,
               scrollDirection: Axis.horizontal,
@@ -51,66 +95,120 @@ class TvShowList extends StatelessWidget {
                 final imageUrl = series.posterPath.isNotEmpty
                     ? 'https://image.tmdb.org/t/p/w500${series.posterPath}'
                     : 'https://via.placeholder.com/500x750?text=No+Image';
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => BlocProvider(
-                                create: (context) =>
-                                    SeasonBloc(repositories)
-                                      ..add(FetchSeriesSeasons(seriesId)),
-                                child: SeasonscreenView(
-                                  seriesId: seriesId,
-                                  seriesName: series.name,
+                return Stack(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 8,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              context.read<EpisodesBloc>().add(
+                                FetchEpisodesEvent(seriesId, 1),
+                              );
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => BlocProvider(
+                                    create: (context) =>
+                                    TvShowVideoBloc(repositories)..add(
+                                      FetchTvShowVideo(
+                                        seriesId, 1, 1,
+                                      ),
+                                    ),
+                                    child: TvShowPlayingScreen(
+                                      seriesId: seriesId,
+                                      episodeName: series.name,
+                                      seriesName: series.name,
+                                      seasonNumber: 1,
+                                      episodeNumber: 1,
+                                    ),
+                                  ),
+                                ),
+                              );
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //     builder: (context) => BlocProvider(
+                              //       create: (context) =>
+                              //           SeasonBloc(repositories)
+                              //             ..add(FetchSeriesSeasons(seriesId)),
+                              //       child: SeasonscreenView(
+                              //         seriesId: seriesId,
+                              //         seriesName: series.name,
+                              //       ),
+                              //     ),
+                              //   ),
+                              // );
+                            },
+                            child: Container(
+                              height: 200,
+                              width: MediaQuery.of(context).size.width * .33,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadiusGeometry.circular(13),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Color(0xFFE7BC0F),
+                                    blurRadius: 8,
+                                    blurStyle: BlurStyle.outer,
+                                  ),
+                                ],
+                                // borderRadius: BorderRadiusGeometry.circular(12)
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(13),
+                                child: Image.network(
+                                  imageUrl,
+                                  fit: BoxFit.fill,
                                 ),
                               ),
                             ),
-                          );
-                        },
-                        child: Container(
-                          height: 240,
-                          width: MediaQuery.of(context).size.width * .4,
-                          decoration: BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                color: Color(0xFFE7BC0F),
-                                blurRadius: 8,
+                          ),
+                          SizedBox(height: 10),
+                          Column(
+                            children: [
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * .3,
+                                child: Text(
+                                  series.name,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.gabriela(
+                                    fontWeight: FontWeight.w600,
+                                    color: Appcolor.primary,
+                                    fontSize: 14,
+                                  ),
+                                ),
                               ),
                             ],
-                            // borderRadius: BorderRadiusGeometry.circular(12)
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(13),
-                            child: Image.network(imageUrl, fit: BoxFit.fill),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      Column(
-                        children: [
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * .4,
-                            child: Text(
-                              series.name,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.gabriela(
-                                fontWeight: FontWeight.w600,
-                                color: Appcolor.primary,
-                                fontSize: 14,
-                              ),
-                            ),
                           ),
                         ],
                       ),
-                    ],
-                  ),
+                    ),
+                    Positioned(
+                      top: 20,
+                      right: 20,
+                      child: Container(
+                        height: 20,
+                        width: 50,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadiusGeometry.circular(12),
+                          color: Colors.black.withOpacity(.7),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.star, color: Appcolor.primary, size: 15),
+                            Text(series.voteAverage.toStringAsFixed(1)),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 );
               },
             ),
@@ -136,69 +234,37 @@ class AiringTodaySeries extends StatelessWidget {
     return BlocBuilder<AiringtodayBloc, AiringtodayState>(
       builder: (context, state) {
         if (state is AiringtodayLoading) {
-          return Center(child: CircularProgressIndicator());
-        }
-        if (state is AiringtodayLoaded) {
           return SizedBox(
-            height: 330,
+            height: 300,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: state.results.length,
+              itemCount: 10,
               itemBuilder: (context, index) {
-                final airingTodayResults = state.results[index];
-                final seriesId = airingTodayResults.id;
-                final posterPath = airingTodayResults.posterPath!.isNotEmpty
-                    ? 'https://image.tmdb.org/t/p/w500${airingTodayResults.posterPath}'
-                    : '';
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
+                return SkeletonItem(
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => BlocProvider(
-                                create: (context) =>
-                                    SeasonBloc(repositories)
-                                      ..add(FetchSeriesSeasons(seriesId)),
-                                child: SeasonscreenView(
-                                  seriesId: seriesId!,
-                                  seriesName: airingTodayResults.name!,
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                        child: Container(
+                      SkeletonAvatar(
+                        style: SkeletonAvatarStyle(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          borderRadius: BorderRadius.circular(10),
+                          width: MediaQuery.of(context).size.width * 0.33,
                           height: 240,
-                          width: MediaQuery.of(context).size.width * .4,
-                          decoration: BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                color: Color(0xFFE7BC0F),
-                                blurRadius: 8,
-                              ),
-                            ],
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(13),
-                            child: Image.network(posterPath, fit: BoxFit.fill),
-                          ),
                         ),
                       ),
-                      SizedBox(height: 8),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * .4,
-                        child: Text(
-                          '${airingTodayResults.name}',
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.gabriela(
-                            fontWeight: FontWeight.w600,
-                            color: Appcolor.primary,
-                            fontSize: 14,
+
+                      const SizedBox(height: 8),
+
+                      SkeletonParagraph(
+                        style: SkeletonParagraphStyle(
+                          lines: 2,
+                          spacing: 6,
+                          lineStyle: SkeletonLineStyle(
+                            randomLength: true,
+                            height: 10,
+                            borderRadius: BorderRadius.circular(8),
+                            minLength: MediaQuery.of(context).size.width / 6,
+                            maxLength: MediaQuery.of(context).size.width / 3,
                           ),
                         ),
                       ),
@@ -209,7 +275,476 @@ class AiringTodaySeries extends StatelessWidget {
             ),
           );
         }
+        if (state is AiringtodayLoaded) {
+          return SizedBox(
+            height: 300,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: state.results.length,
+              itemBuilder: (context, index) {
+                final airingTodayResults = state.results[index];
+                final seriesId = airingTodayResults.id;
+                final posterPath = airingTodayResults.posterPath!.isNotEmpty
+                    ? 'https://image.tmdb.org/t/p/w500${airingTodayResults.posterPath}'
+                    : '';
+                return Stack(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8.0,
+                        vertical: 8,
+                      ),
+                      child: Column(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              context.read<EpisodesBloc>().add(
+                                FetchEpisodesEvent(seriesId!, 1),
+                              );
+
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => BlocProvider(
+                                    create: (context) =>
+                                        SeasonBloc(repositories)
+                                          ..add(FetchSeriesSeasons(seriesId)),
+                                    child: SeasonscreenView(
+                                      seriesId: seriesId,
+                                      seriesName: airingTodayResults.name!,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              height: 200,
+                              width: MediaQuery.of(context).size.width * .33,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadiusGeometry.circular(13),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Color(0xFFE7BC0F),
+                                    blurRadius: 8,
+                                    blurStyle: BlurStyle.outer,
+                                  ),
+                                ],
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(13),
+                                child: Image.network(
+                                  posterPath,
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * .3,
+                            child: Text(
+                              '${airingTodayResults.name}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.gabriela(
+                                fontWeight: FontWeight.w600,
+                                color: Appcolor.primary,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    Positioned(
+                      top: 20,
+                      right: 20,
+                      child: Container(
+                        height: 20,
+                        width: 50,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadiusGeometry.circular(12),
+                          color: Colors.black.withOpacity(.7),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.star, color: Appcolor.primary, size: 15),
+                            Text(
+                              '${airingTodayResults.voteAverage?.toStringAsFixed(1)}',
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          );
+        }
         if (state is AiringtodayError) {
+          return Text('Error fetching movies');
+        }
+        return SizedBox();
+      },
+    );
+  }
+}
+
+class PopularSeries extends StatelessWidget {
+  const PopularSeries({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final SeriesRepositories repositories = SeriesRepositories(
+      SeriesApiService(),
+    );
+    return BlocBuilder<PopularSeriesBloc, PopularSeriesState>(
+      builder: (context, state) {
+        if (state is PopularSeriesLoading) {
+          return SizedBox(
+            height: 300,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: 10,
+              itemBuilder: (context, index) {
+                return SkeletonItem(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SkeletonAvatar(
+                        style: SkeletonAvatarStyle(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          borderRadius: BorderRadius.circular(10),
+                          width: MediaQuery.of(context).size.width * 0.33,
+                          height: 240,
+                        ),
+                      ),
+
+                      const SizedBox(height: 8),
+
+                      SkeletonParagraph(
+                        style: SkeletonParagraphStyle(
+                          lines: 2,
+                          spacing: 6,
+                          lineStyle: SkeletonLineStyle(
+                            randomLength: true,
+                            height: 10,
+                            borderRadius: BorderRadius.circular(8),
+                            minLength: MediaQuery.of(context).size.width / 6,
+                            maxLength: MediaQuery.of(context).size.width / 3,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          );
+        }
+        if (state is PopularSeriesLoaded) {
+          return SizedBox(
+            height: 270,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: state.results.length,
+              itemBuilder: (context, index) {
+                final popularSeriesResult = state.results[index];
+                final seriesId = popularSeriesResult.id;
+                final posterPath = popularSeriesResult.posterPath!.isNotEmpty
+                    ? 'https://image.tmdb.org/t/p/w500${popularSeriesResult.posterPath}'
+                    : '';
+                return Stack(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8.0,
+                        vertical: 8,
+                      ),
+                      child: Column(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              context.read<EpisodesBloc>().add(
+                                FetchEpisodesEvent(seriesId!, 1),
+                              );
+
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => BlocProvider(
+                                    create: (context) =>
+                                        SeasonBloc(repositories)
+                                          ..add(FetchSeriesSeasons(seriesId)),
+                                    child: SeasonscreenView(
+                                      seriesId: seriesId,
+                                      seriesName: popularSeriesResult.name!,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              height: 200,
+                              width: MediaQuery.of(context).size.width * .33,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadiusGeometry.circular(13),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Color(0xFFE7BC0F),
+                                    blurRadius: 8,
+                                    blurStyle: BlurStyle.outer,
+                                  ),
+                                ],
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(13),
+                                child: Image.network(
+                                  posterPath,
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * .3,
+                            child: Text(
+                              '${popularSeriesResult.name}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.gabriela(
+                                fontWeight: FontWeight.w600,
+                                color: Appcolor.primary,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    Positioned(
+                      top: 20,
+                      right: 20,
+                      child: Container(
+                        height: 20,
+                        width: 50,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadiusGeometry.circular(12),
+                          color: Colors.black.withOpacity(.7),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.star, color: Appcolor.primary, size: 15),
+                            Text(
+                              '${popularSeriesResult.voteAverage?.toStringAsFixed(1)}',
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          );
+        }
+        if (state is PopularSeriesFailure) {
+          return Text('Error fetching movies');
+        }
+        return SizedBox();
+      },
+    );
+  }
+}
+
+class TrendingSeries extends StatelessWidget {
+  const TrendingSeries({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final SeriesRepositories repositories = SeriesRepositories(
+      SeriesApiService(),
+    );
+    return BlocBuilder<TrendingSeriesBloc, TrendingSeriesState>(
+      builder: (context, state) {
+        if (state is TrendingSeriesLoading) {
+          return SizedBox(
+            height: 280,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: 10,
+              itemBuilder: (context, index) {
+                return SkeletonItem(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SkeletonAvatar(
+                        style: SkeletonAvatarStyle(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          borderRadius: BorderRadius.circular(10),
+                          width: MediaQuery.of(context).size.width * 0.33,
+                          height: 240,
+                        ),
+                      ),
+
+                      const SizedBox(height: 8),
+
+                      SkeletonParagraph(
+                        style: SkeletonParagraphStyle(
+                          lines: 2,
+                          spacing: 6,
+                          lineStyle: SkeletonLineStyle(
+                            randomLength: true,
+                            height: 10,
+                            borderRadius: BorderRadius.circular(8),
+                            minLength: MediaQuery.of(context).size.width / 6,
+                            maxLength: MediaQuery.of(context).size.width / 3,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          );
+        }
+        if (state is TrendingSeriesLoaded) {
+          return SizedBox(
+            height: 270,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: state.results.length,
+              itemBuilder: (context, index) {
+                final popularSeriesResult = state.results[index];
+                final seriesId = popularSeriesResult.id;
+                final posterPath = popularSeriesResult.posterPath!.isNotEmpty
+                    ? 'https://image.tmdb.org/t/p/w500${popularSeriesResult.posterPath}'
+                    : '';
+                return Stack(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8.0,
+                        vertical: 8,
+                      ),
+                      child: Column(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              context.read<EpisodesBloc>().add(
+                                FetchEpisodesEvent(seriesId!, 1),
+                              );
+
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => BlocProvider(
+                                    create: (context) =>
+                                    TvShowVideoBloc(repositories)..add(
+                                      FetchTvShowVideo(
+                                        seriesId, 1, 1,
+                                      ),
+                                    ),
+                                    child: TvShowPlayingScreen(
+                                      seriesId: seriesId,
+                                      episodeName: popularSeriesResult.name!,
+                                      seriesName: popularSeriesResult.name!,
+                                      seasonNumber: 1,
+                                      episodeNumber: 1,
+                                    ),
+                                  ),
+                                ),
+                              );
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //     builder: (context) => BlocProvider(
+                              //       create: (context) =>
+                              //           SeasonBloc(repositories)
+                              //             ..add(FetchSeriesSeasons(seriesId)),
+                              //       child: SeasonscreenView(
+                              //         seriesId: seriesId!,
+                              //         seriesName: popularSeriesResult.name!,
+                              //       ),
+                              //     ),
+                              //   ),
+                              // );
+                            },
+                            child: Container(
+                              height: 200,
+                              width: MediaQuery.of(context).size.width * .33,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadiusGeometry.circular(13),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Color(0xFFE7BC0F),
+                                    blurRadius: 8,
+                                    blurStyle: BlurStyle.outer,
+                                  ),
+                                ],
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(13),
+                                child: Image.network(
+                                  posterPath,
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * .3,
+                            child: Text(
+                              '${popularSeriesResult.name}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.gabriela(
+                                fontWeight: FontWeight.w600,
+                                color: Appcolor.primary,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    Positioned(
+                      top: 20,
+                      right: 20,
+                      child: Container(
+                        height: 20,
+                        width: 50,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadiusGeometry.circular(12),
+                          color: Colors.black.withOpacity(.7),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.star, color: Appcolor.primary, size: 15),
+                            Text(
+                              '${popularSeriesResult.voteAverage?.toStringAsFixed(1)}',
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          );
+        }
+        if (state is TrendingSeriesFailure) {
           return Text('Error fetching movies');
         }
         return SizedBox();
@@ -268,7 +803,7 @@ class _SeasonContainerState extends State<SeasonContainer> {
           final season = filteredSeasons[index];
 
           final imageUrl =
-          (season.posterPath != null && season.posterPath!.isNotEmpty)
+              (season.posterPath != null && season.posterPath!.isNotEmpty)
               ? 'https://image.tmdb.org/t/p/w500${season.posterPath}'
               : 'https://via.placeholder.com/500x750?text=No+Image';
 
@@ -320,8 +855,7 @@ class _SeasonContainerState extends State<SeasonContainer> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
-                            mainAxisAlignment:
-                            MainAxisAlignment.spaceBetween,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
                                 'Season ${season.seasonNumber ?? ''}',
@@ -373,13 +907,14 @@ class EpisodeList extends StatefulWidget {
   final List<EpisodeElement>? episodes;
   final int seriesId;
   final String seriesName;
-  // final int seasonNumber;
+  final int? seasonNumber;
 
   const EpisodeList({
     super.key,
     this.episodes,
     required this.seriesId,
     required this.seriesName,
+    this.seasonNumber
   });
 
   @override
@@ -468,29 +1003,38 @@ class _EpisodeListState extends State<EpisodeList> {
                           BlocBuilder<WatchListBloc, WatchListState>(
                             builder: (context, state) {
                               final isBookmarked = state.series.any(
-                                    (s) => s.id == episode.id,
+                                (s) => s.episodeId == episode.id,
                               );
 
                               return IconButton(
                                 onPressed: () {
                                   if (isBookmarked) {
                                     context.read<WatchListBloc>().add(
-                                      WatchListEvent.removeSeriesFromWatchList(episode.id),
+                                      WatchListEvent.removeSeriesFromWatchList(
+                                        episode.id,
+                                      ),
                                     );
                                   } else {
                                     context.read<WatchListBloc>().add(
                                       WatchListEvent.addSeriesToWatchList(
                                         AiringTodayResults(
-                                          id: episode.id,
-                                          overview: episode.name,
-                                          name: widget.seriesName,posterPath: imageUrl,
+                                          id: widget.seriesId,
+                                          episodeId: episode.id,
+                                          episodeName: episode.name,
+                                          seasonNumber: episode.seasonNumber,
+                                          episodeNumber: episode.episodeNumber,
+                                          overview: episode.overview,
+                                          name: widget.seriesName,
+                                          posterPath: imageUrl,
                                         ),
                                       ),
                                     );
                                   }
                                 },
                                 icon: Icon(
-                                  isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                                  isBookmarked
+                                      ? Icons.bookmark
+                                      : Icons.bookmark_border,
                                   color: Colors.white,
                                   size: 30,
                                 ),
@@ -503,20 +1047,26 @@ class _EpisodeListState extends State<EpisodeList> {
                               log('Episode Number : ${episode.episodeNumber}');
                               log('Series Id : ${widget.seriesId}');
                               log('Season Number : ${episode.seasonNumber}');
-                              Navigator.push(
+                              // log('Season Number : ${widget.seasonNumber}');
+
+                              context.read<EpisodesBloc>().add(
+                                FetchEpisodesEvent(widget.seriesId, 1),
+                              );
+
+                              Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => BlocProvider(
                                     create: (context) =>
-                                        TvShowVideoBloc(repositories)..add(
-                                          FetchTvShowVideo(
-                                            widget.seriesId,
-                                            episode.seasonNumber,
-                                            episode.episodeNumber,
-                                          ),
-                                        ),
+                                    TvShowVideoBloc(repositories)..add(
+                                      FetchTvShowVideo(
+                                        widget.seriesId, episode.seasonNumber,episode.episodeNumber,
+                                      ),
+                                    ),
                                     child: TvShowPlayingScreen(
                                       seriesId: widget.seriesId,
+                                      episodeName: episode.name,
+                                      overview: episode.overview,
                                       seriesName: widget.seriesName,
                                       seasonNumber: episode.seasonNumber,
                                       episodeNumber: episode.episodeNumber,
@@ -524,15 +1074,37 @@ class _EpisodeListState extends State<EpisodeList> {
                                   ),
                                 ),
                               );
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //     builder: (context) => BlocProvider(
+                              //       create: (context) =>
+                              //           TvShowVideoBloc(repositories)..add(
+                              //             FetchTvShowVideo(
+                              //               widget.seriesId,
+                              //               episode.seasonNumber,
+                              //               episode.episodeNumber,
+                              //             ),
+                              //           ),
+                              //       child: TvShowPlayingScreen(
+                              //         seriesId: widget.seriesId,
+                              //         episodeName: episode.name,
+                              //         seriesName: widget.seriesName,
+                              //         seasonNumber: episode.seasonNumber,
+                              //         episodeNumber: episode.episodeNumber,
+                              //       ),
+                              //     ),
+                              //   ),
+                              // );
                             },
-                            child: Text(
-                              'Play',
-                              style: GoogleFonts.gabriela(color: Colors.black),
-                            ),
                             style: ButtonStyle(
                               backgroundColor: WidgetStatePropertyAll(
                                 Appcolor.primary,
                               ),
+                            ),
+                            child: Text(
+                              'Play',
+                              style: GoogleFonts.gabriela(color: Colors.black),
                             ),
                           ),
                         ],
@@ -595,8 +1167,13 @@ class _TvShowSearchBarState extends State<TvShowSearchBar> {
                     horizontal: 14,
                     vertical: 10,
                   ),
-                  focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Appcolor.primary)),
-                  enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.grey),borderRadius: BorderRadius.circular(12)),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Appcolor.primary),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -650,20 +1227,46 @@ class _TvShowSearchBarState extends State<TvShowSearchBar> {
                         log(
                           'Selected: ${series.name}, Poster: ${series.posterPath}',
                         );
+                        context.read<EpisodesBloc>().add(
+                          FetchEpisodesEvent(series.id, 1),
+                        );
+
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => BlocProvider(
                               create: (context) =>
-                                  SeasonBloc(repositories)
-                                    ..add(FetchSeriesSeasons(series.id)),
-                              child: SeasonscreenView(
+                              TvShowVideoBloc(repositories)..add(
+                                FetchTvShowVideo(
+                                  series.id,
+                                  1,
+                                  1,
+                                ),
+                              ),
+                              child: TvShowPlayingScreen(
                                 seriesId: series.id,
+                                episodeName: series.name!,
                                 seriesName: series.name!,
+                                seasonNumber: 1,
+                                episodeNumber: 1,
                               ),
                             ),
                           ),
                         );
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (context) => BlocProvider(
+                        //       create: (context) =>
+                        //           SeasonBloc(repositories)
+                        //             ..add(FetchSeriesSeasons(series.id)),
+                        //       child: SeasonscreenView(
+                        //         seriesId: series.id,
+                        //         seriesName: series.name!,
+                        //       ),
+                        //     ),
+                        //   ),
+                        // );
                       },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15.0),
@@ -739,7 +1342,8 @@ class _RecommendedSeriesListState extends State<RecommendedSeriesList> {
     return SizedBox(
       height: 350,
       child: BlocProvider(
-        create: (context) => RecommendedSeriesBloc(repositories)..add(RecommendedSeriesEvent.fetchRecommendedSeries(widget.seriesId)),
+        create: (context) => RecommendedSeriesBloc(repositories)
+          ..add(RecommendedSeriesEvent.fetchRecommendedSeries(widget.seriesId)),
         child: BlocBuilder<RecommendedSeriesBloc, RecommendedSeriesState>(
           builder: (context, state) {
             if (state is RecommendedSeriesLoading) {

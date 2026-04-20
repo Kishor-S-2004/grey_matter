@@ -32,10 +32,11 @@ class UserProfile extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Appcolor.background,
         appBar: AppBar(
+          iconTheme: IconThemeData(color: Appcolor.primary),
           backgroundColor: Appcolor.background,
           title: Text(
             "Profile",
-            style: TextStyle(color: Appcolor.primary),
+            style: GoogleFonts.gabriela(color: Appcolor.primary,fontWeight: FontWeight.bold),
           ),
           actions: [
             IconButton(onPressed: () async{

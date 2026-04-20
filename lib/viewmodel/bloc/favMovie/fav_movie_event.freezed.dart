@@ -21,37 +21,43 @@ mixin _$FavMovieEvent {
   TResult when<TResult extends Object?>({
     required TResult Function() fetchFavMovies,
     required TResult Function(Result movie) addFavMovie,
-    required TResult Function(String movieId) removeFavMovie,
+    required TResult Function(List<Result> movie) updateFavMovie,
+    required TResult Function(int movieId) removeFavMovie,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? fetchFavMovies,
     TResult? Function(Result movie)? addFavMovie,
-    TResult? Function(String movieId)? removeFavMovie,
+    TResult? Function(List<Result> movie)? updateFavMovie,
+    TResult? Function(int movieId)? removeFavMovie,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? fetchFavMovies,
     TResult Function(Result movie)? addFavMovie,
-    TResult Function(String movieId)? removeFavMovie,
+    TResult Function(List<Result> movie)? updateFavMovie,
+    TResult Function(int movieId)? removeFavMovie,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(FetchFavMovies value) fetchFavMovies,
     required TResult Function(AddFavMovie value) addFavMovie,
+    required TResult Function(UpdateFavMovie value) updateFavMovie,
     required TResult Function(RemoveFavMovie value) removeFavMovie,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(FetchFavMovies value)? fetchFavMovies,
     TResult? Function(AddFavMovie value)? addFavMovie,
+    TResult? Function(UpdateFavMovie value)? updateFavMovie,
     TResult? Function(RemoveFavMovie value)? removeFavMovie,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(FetchFavMovies value)? fetchFavMovies,
     TResult Function(AddFavMovie value)? addFavMovie,
+    TResult Function(UpdateFavMovie value)? updateFavMovie,
     TResult Function(RemoveFavMovie value)? removeFavMovie,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
@@ -124,7 +130,8 @@ class _$FetchFavMoviesImpl implements FetchFavMovies {
   TResult when<TResult extends Object?>({
     required TResult Function() fetchFavMovies,
     required TResult Function(Result movie) addFavMovie,
-    required TResult Function(String movieId) removeFavMovie,
+    required TResult Function(List<Result> movie) updateFavMovie,
+    required TResult Function(int movieId) removeFavMovie,
   }) {
     return fetchFavMovies();
   }
@@ -134,7 +141,8 @@ class _$FetchFavMoviesImpl implements FetchFavMovies {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? fetchFavMovies,
     TResult? Function(Result movie)? addFavMovie,
-    TResult? Function(String movieId)? removeFavMovie,
+    TResult? Function(List<Result> movie)? updateFavMovie,
+    TResult? Function(int movieId)? removeFavMovie,
   }) {
     return fetchFavMovies?.call();
   }
@@ -144,7 +152,8 @@ class _$FetchFavMoviesImpl implements FetchFavMovies {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? fetchFavMovies,
     TResult Function(Result movie)? addFavMovie,
-    TResult Function(String movieId)? removeFavMovie,
+    TResult Function(List<Result> movie)? updateFavMovie,
+    TResult Function(int movieId)? removeFavMovie,
     required TResult orElse(),
   }) {
     if (fetchFavMovies != null) {
@@ -158,6 +167,7 @@ class _$FetchFavMoviesImpl implements FetchFavMovies {
   TResult map<TResult extends Object?>({
     required TResult Function(FetchFavMovies value) fetchFavMovies,
     required TResult Function(AddFavMovie value) addFavMovie,
+    required TResult Function(UpdateFavMovie value) updateFavMovie,
     required TResult Function(RemoveFavMovie value) removeFavMovie,
   }) {
     return fetchFavMovies(this);
@@ -168,6 +178,7 @@ class _$FetchFavMoviesImpl implements FetchFavMovies {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(FetchFavMovies value)? fetchFavMovies,
     TResult? Function(AddFavMovie value)? addFavMovie,
+    TResult? Function(UpdateFavMovie value)? updateFavMovie,
     TResult? Function(RemoveFavMovie value)? removeFavMovie,
   }) {
     return fetchFavMovies?.call(this);
@@ -178,6 +189,7 @@ class _$FetchFavMoviesImpl implements FetchFavMovies {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(FetchFavMovies value)? fetchFavMovies,
     TResult Function(AddFavMovie value)? addFavMovie,
+    TResult Function(UpdateFavMovie value)? updateFavMovie,
     TResult Function(RemoveFavMovie value)? removeFavMovie,
     required TResult orElse(),
   }) {
@@ -264,7 +276,8 @@ class _$AddFavMovieImpl implements AddFavMovie {
   TResult when<TResult extends Object?>({
     required TResult Function() fetchFavMovies,
     required TResult Function(Result movie) addFavMovie,
-    required TResult Function(String movieId) removeFavMovie,
+    required TResult Function(List<Result> movie) updateFavMovie,
+    required TResult Function(int movieId) removeFavMovie,
   }) {
     return addFavMovie(movie);
   }
@@ -274,7 +287,8 @@ class _$AddFavMovieImpl implements AddFavMovie {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? fetchFavMovies,
     TResult? Function(Result movie)? addFavMovie,
-    TResult? Function(String movieId)? removeFavMovie,
+    TResult? Function(List<Result> movie)? updateFavMovie,
+    TResult? Function(int movieId)? removeFavMovie,
   }) {
     return addFavMovie?.call(movie);
   }
@@ -284,7 +298,8 @@ class _$AddFavMovieImpl implements AddFavMovie {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? fetchFavMovies,
     TResult Function(Result movie)? addFavMovie,
-    TResult Function(String movieId)? removeFavMovie,
+    TResult Function(List<Result> movie)? updateFavMovie,
+    TResult Function(int movieId)? removeFavMovie,
     required TResult orElse(),
   }) {
     if (addFavMovie != null) {
@@ -298,6 +313,7 @@ class _$AddFavMovieImpl implements AddFavMovie {
   TResult map<TResult extends Object?>({
     required TResult Function(FetchFavMovies value) fetchFavMovies,
     required TResult Function(AddFavMovie value) addFavMovie,
+    required TResult Function(UpdateFavMovie value) updateFavMovie,
     required TResult Function(RemoveFavMovie value) removeFavMovie,
   }) {
     return addFavMovie(this);
@@ -308,6 +324,7 @@ class _$AddFavMovieImpl implements AddFavMovie {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(FetchFavMovies value)? fetchFavMovies,
     TResult? Function(AddFavMovie value)? addFavMovie,
+    TResult? Function(UpdateFavMovie value)? updateFavMovie,
     TResult? Function(RemoveFavMovie value)? removeFavMovie,
   }) {
     return addFavMovie?.call(this);
@@ -318,6 +335,7 @@ class _$AddFavMovieImpl implements AddFavMovie {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(FetchFavMovies value)? fetchFavMovies,
     TResult Function(AddFavMovie value)? addFavMovie,
+    TResult Function(UpdateFavMovie value)? updateFavMovie,
     TResult Function(RemoveFavMovie value)? removeFavMovie,
     required TResult orElse(),
   }) {
@@ -341,13 +359,176 @@ abstract class AddFavMovie implements FavMovieEvent {
 }
 
 /// @nodoc
+abstract class _$$UpdateFavMovieImplCopyWith<$Res> {
+  factory _$$UpdateFavMovieImplCopyWith(
+    _$UpdateFavMovieImpl value,
+    $Res Function(_$UpdateFavMovieImpl) then,
+  ) = __$$UpdateFavMovieImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({List<Result> movie});
+}
+
+/// @nodoc
+class __$$UpdateFavMovieImplCopyWithImpl<$Res>
+    extends _$FavMovieEventCopyWithImpl<$Res, _$UpdateFavMovieImpl>
+    implements _$$UpdateFavMovieImplCopyWith<$Res> {
+  __$$UpdateFavMovieImplCopyWithImpl(
+    _$UpdateFavMovieImpl _value,
+    $Res Function(_$UpdateFavMovieImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of FavMovieEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? movie = null}) {
+    return _then(
+      _$UpdateFavMovieImpl(
+        null == movie
+            ? _value._movie
+            : movie // ignore: cast_nullable_to_non_nullable
+                  as List<Result>,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+
+class _$UpdateFavMovieImpl implements UpdateFavMovie {
+  const _$UpdateFavMovieImpl(final List<Result> movie) : _movie = movie;
+
+  final List<Result> _movie;
+  @override
+  List<Result> get movie {
+    if (_movie is EqualUnmodifiableListView) return _movie;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_movie);
+  }
+
+  @override
+  String toString() {
+    return 'FavMovieEvent.updateFavMovie(movie: $movie)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$UpdateFavMovieImpl &&
+            const DeepCollectionEquality().equals(other._movie, _movie));
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_movie));
+
+  /// Create a copy of FavMovieEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$UpdateFavMovieImplCopyWith<_$UpdateFavMovieImpl> get copyWith =>
+      __$$UpdateFavMovieImplCopyWithImpl<_$UpdateFavMovieImpl>(
+        this,
+        _$identity,
+      );
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() fetchFavMovies,
+    required TResult Function(Result movie) addFavMovie,
+    required TResult Function(List<Result> movie) updateFavMovie,
+    required TResult Function(int movieId) removeFavMovie,
+  }) {
+    return updateFavMovie(movie);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? fetchFavMovies,
+    TResult? Function(Result movie)? addFavMovie,
+    TResult? Function(List<Result> movie)? updateFavMovie,
+    TResult? Function(int movieId)? removeFavMovie,
+  }) {
+    return updateFavMovie?.call(movie);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? fetchFavMovies,
+    TResult Function(Result movie)? addFavMovie,
+    TResult Function(List<Result> movie)? updateFavMovie,
+    TResult Function(int movieId)? removeFavMovie,
+    required TResult orElse(),
+  }) {
+    if (updateFavMovie != null) {
+      return updateFavMovie(movie);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(FetchFavMovies value) fetchFavMovies,
+    required TResult Function(AddFavMovie value) addFavMovie,
+    required TResult Function(UpdateFavMovie value) updateFavMovie,
+    required TResult Function(RemoveFavMovie value) removeFavMovie,
+  }) {
+    return updateFavMovie(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(FetchFavMovies value)? fetchFavMovies,
+    TResult? Function(AddFavMovie value)? addFavMovie,
+    TResult? Function(UpdateFavMovie value)? updateFavMovie,
+    TResult? Function(RemoveFavMovie value)? removeFavMovie,
+  }) {
+    return updateFavMovie?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(FetchFavMovies value)? fetchFavMovies,
+    TResult Function(AddFavMovie value)? addFavMovie,
+    TResult Function(UpdateFavMovie value)? updateFavMovie,
+    TResult Function(RemoveFavMovie value)? removeFavMovie,
+    required TResult orElse(),
+  }) {
+    if (updateFavMovie != null) {
+      return updateFavMovie(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class UpdateFavMovie implements FavMovieEvent {
+  const factory UpdateFavMovie(final List<Result> movie) = _$UpdateFavMovieImpl;
+
+  List<Result> get movie;
+
+  /// Create a copy of FavMovieEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$UpdateFavMovieImplCopyWith<_$UpdateFavMovieImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
 abstract class _$$RemoveFavMovieImplCopyWith<$Res> {
   factory _$$RemoveFavMovieImplCopyWith(
     _$RemoveFavMovieImpl value,
     $Res Function(_$RemoveFavMovieImpl) then,
   ) = __$$RemoveFavMovieImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({String movieId});
+  $Res call({int movieId});
 }
 
 /// @nodoc
@@ -369,7 +550,7 @@ class __$$RemoveFavMovieImplCopyWithImpl<$Res>
         null == movieId
             ? _value.movieId
             : movieId // ignore: cast_nullable_to_non_nullable
-                  as String,
+                  as int,
       ),
     );
   }
@@ -381,7 +562,7 @@ class _$RemoveFavMovieImpl implements RemoveFavMovie {
   const _$RemoveFavMovieImpl(this.movieId);
 
   @override
-  final String movieId;
+  final int movieId;
 
   @override
   String toString() {
@@ -415,7 +596,8 @@ class _$RemoveFavMovieImpl implements RemoveFavMovie {
   TResult when<TResult extends Object?>({
     required TResult Function() fetchFavMovies,
     required TResult Function(Result movie) addFavMovie,
-    required TResult Function(String movieId) removeFavMovie,
+    required TResult Function(List<Result> movie) updateFavMovie,
+    required TResult Function(int movieId) removeFavMovie,
   }) {
     return removeFavMovie(movieId);
   }
@@ -425,7 +607,8 @@ class _$RemoveFavMovieImpl implements RemoveFavMovie {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? fetchFavMovies,
     TResult? Function(Result movie)? addFavMovie,
-    TResult? Function(String movieId)? removeFavMovie,
+    TResult? Function(List<Result> movie)? updateFavMovie,
+    TResult? Function(int movieId)? removeFavMovie,
   }) {
     return removeFavMovie?.call(movieId);
   }
@@ -435,7 +618,8 @@ class _$RemoveFavMovieImpl implements RemoveFavMovie {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? fetchFavMovies,
     TResult Function(Result movie)? addFavMovie,
-    TResult Function(String movieId)? removeFavMovie,
+    TResult Function(List<Result> movie)? updateFavMovie,
+    TResult Function(int movieId)? removeFavMovie,
     required TResult orElse(),
   }) {
     if (removeFavMovie != null) {
@@ -449,6 +633,7 @@ class _$RemoveFavMovieImpl implements RemoveFavMovie {
   TResult map<TResult extends Object?>({
     required TResult Function(FetchFavMovies value) fetchFavMovies,
     required TResult Function(AddFavMovie value) addFavMovie,
+    required TResult Function(UpdateFavMovie value) updateFavMovie,
     required TResult Function(RemoveFavMovie value) removeFavMovie,
   }) {
     return removeFavMovie(this);
@@ -459,6 +644,7 @@ class _$RemoveFavMovieImpl implements RemoveFavMovie {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(FetchFavMovies value)? fetchFavMovies,
     TResult? Function(AddFavMovie value)? addFavMovie,
+    TResult? Function(UpdateFavMovie value)? updateFavMovie,
     TResult? Function(RemoveFavMovie value)? removeFavMovie,
   }) {
     return removeFavMovie?.call(this);
@@ -469,6 +655,7 @@ class _$RemoveFavMovieImpl implements RemoveFavMovie {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(FetchFavMovies value)? fetchFavMovies,
     TResult Function(AddFavMovie value)? addFavMovie,
+    TResult Function(UpdateFavMovie value)? updateFavMovie,
     TResult Function(RemoveFavMovie value)? removeFavMovie,
     required TResult orElse(),
   }) {
@@ -480,9 +667,9 @@ class _$RemoveFavMovieImpl implements RemoveFavMovie {
 }
 
 abstract class RemoveFavMovie implements FavMovieEvent {
-  const factory RemoveFavMovie(final String movieId) = _$RemoveFavMovieImpl;
+  const factory RemoveFavMovie(final int movieId) = _$RemoveFavMovieImpl;
 
-  String get movieId;
+  int get movieId;
 
   /// Create a copy of FavMovieEvent
   /// with the given fields replaced by the non-null parameter values.

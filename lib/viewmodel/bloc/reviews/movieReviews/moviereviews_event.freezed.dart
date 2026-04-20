@@ -21,32 +21,38 @@ mixin _$MovieReviewsEvent {
   TResult when<TResult extends Object?>({
     required TResult Function(int movieId) fetchReview,
     required TResult Function(MovieReviewResults result) addReview,
+    required TResult Function(String reviewId) removeReview,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(int movieId)? fetchReview,
     TResult? Function(MovieReviewResults result)? addReview,
+    TResult? Function(String reviewId)? removeReview,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(int movieId)? fetchReview,
     TResult Function(MovieReviewResults result)? addReview,
+    TResult Function(String reviewId)? removeReview,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(FetchReviews value) fetchReview,
     required TResult Function(MovieReviews value) addReview,
+    required TResult Function(RemoveMovieReview value) removeReview,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(FetchReviews value)? fetchReview,
     TResult? Function(MovieReviews value)? addReview,
+    TResult? Function(RemoveMovieReview value)? removeReview,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(FetchReviews value)? fetchReview,
     TResult Function(MovieReviews value)? addReview,
+    TResult Function(RemoveMovieReview value)? removeReview,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
 }
@@ -145,6 +151,7 @@ class _$FetchReviewsImpl implements FetchReviews {
   TResult when<TResult extends Object?>({
     required TResult Function(int movieId) fetchReview,
     required TResult Function(MovieReviewResults result) addReview,
+    required TResult Function(String reviewId) removeReview,
   }) {
     return fetchReview(movieId);
   }
@@ -154,6 +161,7 @@ class _$FetchReviewsImpl implements FetchReviews {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(int movieId)? fetchReview,
     TResult? Function(MovieReviewResults result)? addReview,
+    TResult? Function(String reviewId)? removeReview,
   }) {
     return fetchReview?.call(movieId);
   }
@@ -163,6 +171,7 @@ class _$FetchReviewsImpl implements FetchReviews {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(int movieId)? fetchReview,
     TResult Function(MovieReviewResults result)? addReview,
+    TResult Function(String reviewId)? removeReview,
     required TResult orElse(),
   }) {
     if (fetchReview != null) {
@@ -176,6 +185,7 @@ class _$FetchReviewsImpl implements FetchReviews {
   TResult map<TResult extends Object?>({
     required TResult Function(FetchReviews value) fetchReview,
     required TResult Function(MovieReviews value) addReview,
+    required TResult Function(RemoveMovieReview value) removeReview,
   }) {
     return fetchReview(this);
   }
@@ -185,6 +195,7 @@ class _$FetchReviewsImpl implements FetchReviews {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(FetchReviews value)? fetchReview,
     TResult? Function(MovieReviews value)? addReview,
+    TResult? Function(RemoveMovieReview value)? removeReview,
   }) {
     return fetchReview?.call(this);
   }
@@ -194,6 +205,7 @@ class _$FetchReviewsImpl implements FetchReviews {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(FetchReviews value)? fetchReview,
     TResult Function(MovieReviews value)? addReview,
+    TResult Function(RemoveMovieReview value)? removeReview,
     required TResult orElse(),
   }) {
     if (fetchReview != null) {
@@ -287,6 +299,7 @@ class _$MovieReviewsImpl implements MovieReviews {
   TResult when<TResult extends Object?>({
     required TResult Function(int movieId) fetchReview,
     required TResult Function(MovieReviewResults result) addReview,
+    required TResult Function(String reviewId) removeReview,
   }) {
     return addReview(result);
   }
@@ -296,6 +309,7 @@ class _$MovieReviewsImpl implements MovieReviews {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(int movieId)? fetchReview,
     TResult? Function(MovieReviewResults result)? addReview,
+    TResult? Function(String reviewId)? removeReview,
   }) {
     return addReview?.call(result);
   }
@@ -305,6 +319,7 @@ class _$MovieReviewsImpl implements MovieReviews {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(int movieId)? fetchReview,
     TResult Function(MovieReviewResults result)? addReview,
+    TResult Function(String reviewId)? removeReview,
     required TResult orElse(),
   }) {
     if (addReview != null) {
@@ -318,6 +333,7 @@ class _$MovieReviewsImpl implements MovieReviews {
   TResult map<TResult extends Object?>({
     required TResult Function(FetchReviews value) fetchReview,
     required TResult Function(MovieReviews value) addReview,
+    required TResult Function(RemoveMovieReview value) removeReview,
   }) {
     return addReview(this);
   }
@@ -327,6 +343,7 @@ class _$MovieReviewsImpl implements MovieReviews {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(FetchReviews value)? fetchReview,
     TResult? Function(MovieReviews value)? addReview,
+    TResult? Function(RemoveMovieReview value)? removeReview,
   }) {
     return addReview?.call(this);
   }
@@ -336,6 +353,7 @@ class _$MovieReviewsImpl implements MovieReviews {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(FetchReviews value)? fetchReview,
     TResult Function(MovieReviews value)? addReview,
+    TResult Function(RemoveMovieReview value)? removeReview,
     required TResult orElse(),
   }) {
     if (addReview != null) {
@@ -355,5 +373,158 @@ abstract class MovieReviews implements MovieReviewsEvent {
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$MovieReviewsImplCopyWith<_$MovieReviewsImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$RemoveMovieReviewImplCopyWith<$Res> {
+  factory _$$RemoveMovieReviewImplCopyWith(
+    _$RemoveMovieReviewImpl value,
+    $Res Function(_$RemoveMovieReviewImpl) then,
+  ) = __$$RemoveMovieReviewImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String reviewId});
+}
+
+/// @nodoc
+class __$$RemoveMovieReviewImplCopyWithImpl<$Res>
+    extends _$MovieReviewsEventCopyWithImpl<$Res, _$RemoveMovieReviewImpl>
+    implements _$$RemoveMovieReviewImplCopyWith<$Res> {
+  __$$RemoveMovieReviewImplCopyWithImpl(
+    _$RemoveMovieReviewImpl _value,
+    $Res Function(_$RemoveMovieReviewImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of MovieReviewsEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? reviewId = null}) {
+    return _then(
+      _$RemoveMovieReviewImpl(
+        null == reviewId
+            ? _value.reviewId
+            : reviewId // ignore: cast_nullable_to_non_nullable
+                  as String,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+
+class _$RemoveMovieReviewImpl implements RemoveMovieReview {
+  const _$RemoveMovieReviewImpl(this.reviewId);
+
+  @override
+  final String reviewId;
+
+  @override
+  String toString() {
+    return 'MovieReviewsEvent.removeReview(reviewId: $reviewId)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$RemoveMovieReviewImpl &&
+            (identical(other.reviewId, reviewId) ||
+                other.reviewId == reviewId));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, reviewId);
+
+  /// Create a copy of MovieReviewsEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$RemoveMovieReviewImplCopyWith<_$RemoveMovieReviewImpl> get copyWith =>
+      __$$RemoveMovieReviewImplCopyWithImpl<_$RemoveMovieReviewImpl>(
+        this,
+        _$identity,
+      );
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(int movieId) fetchReview,
+    required TResult Function(MovieReviewResults result) addReview,
+    required TResult Function(String reviewId) removeReview,
+  }) {
+    return removeReview(reviewId);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(int movieId)? fetchReview,
+    TResult? Function(MovieReviewResults result)? addReview,
+    TResult? Function(String reviewId)? removeReview,
+  }) {
+    return removeReview?.call(reviewId);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(int movieId)? fetchReview,
+    TResult Function(MovieReviewResults result)? addReview,
+    TResult Function(String reviewId)? removeReview,
+    required TResult orElse(),
+  }) {
+    if (removeReview != null) {
+      return removeReview(reviewId);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(FetchReviews value) fetchReview,
+    required TResult Function(MovieReviews value) addReview,
+    required TResult Function(RemoveMovieReview value) removeReview,
+  }) {
+    return removeReview(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(FetchReviews value)? fetchReview,
+    TResult? Function(MovieReviews value)? addReview,
+    TResult? Function(RemoveMovieReview value)? removeReview,
+  }) {
+    return removeReview?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(FetchReviews value)? fetchReview,
+    TResult Function(MovieReviews value)? addReview,
+    TResult Function(RemoveMovieReview value)? removeReview,
+    required TResult orElse(),
+  }) {
+    if (removeReview != null) {
+      return removeReview(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class RemoveMovieReview implements MovieReviewsEvent {
+  const factory RemoveMovieReview(final String reviewId) =
+      _$RemoveMovieReviewImpl;
+
+  String get reviewId;
+
+  /// Create a copy of MovieReviewsEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$RemoveMovieReviewImplCopyWith<_$RemoveMovieReviewImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

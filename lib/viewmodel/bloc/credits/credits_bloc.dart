@@ -19,7 +19,7 @@ class CredtisBloc extends Bloc<CredtisEvent, CredtisState> {
       try {
         log('try block start');
         final Credits credits = await repositories.getCreditDetails(event.movieId);
-        log('after await');  // THIS LOG SHOULD RUN
+        log('after await');
         emit(CredtisLoaded(credits.cast,credits.crew));
       } catch (e, s) {
         log('ERROR: $e');

@@ -42,6 +42,8 @@ class MovieReviewRepo {
       return snapshot.docs.map((doc) {
         return MovieReviewResults(
           id: doc['reviewId'],
+          userId: doc['userId'],
+          reviewId: doc['reviewId'],
           movieId: doc['movieId'],
           movieName: doc['movieName'],
           author: doc['username'],
@@ -51,5 +53,10 @@ class MovieReviewRepo {
         );
       }).toList();
     });
+  }
+  
+  Future<void> removeReview(String reviewId) async{
+    final userId = _auth.currentUser?.uid;
+    final reviewRef = _firestore.collection('MovieReviews').doc(reviewId).delete();
   }
 }

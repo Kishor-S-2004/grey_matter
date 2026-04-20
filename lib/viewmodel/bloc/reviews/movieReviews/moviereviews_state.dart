@@ -8,6 +8,7 @@ class MovieReviewsState with _$MovieReviewsState{
   const factory MovieReviewsState.initial() = Initial;
   const factory MovieReviewsState.loading() = Loading;
   const factory MovieReviewsState.added() = Added;
+  const factory MovieReviewsState.removed() = Removed;
   const factory MovieReviewsState.loaded(List<MovieReviewResults> results) = Loaded;
   const factory MovieReviewsState.failure(String error) = Failure;
 }

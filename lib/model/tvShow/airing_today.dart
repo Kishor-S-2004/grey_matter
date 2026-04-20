@@ -31,6 +31,10 @@ class AiringTodayResults {
   DateTime? firstAirDate;
   List<int>? genreIds;
   int? id;
+  int? seasonNumber;
+  int? episodeNumber;
+  int? episodeId;
+  String? episodeName;
   String? name;
   List<String>? originCountry;
   String? originalLanguage;
@@ -46,6 +50,10 @@ class AiringTodayResults {
     this.firstAirDate,
     this.genreIds,
     this.id,
+    this.episodeId,
+    this.seasonNumber,
+    this.episodeNumber,
+    this.episodeName,
     this.name,
     this.originCountry,
     this.originalLanguage,
@@ -62,6 +70,10 @@ class AiringTodayResults {
     firstAirDate: json['first_air_date'] != null && (json['first_air_date'] as String).isNotEmpty ? DateTime.tryParse(json['first_air_date']) : null,
     genreIds: (json['genre_ids'] as List<dynamic>?)?.map((x)=> x as int).toList() ?? [],
     id: json["id"] ?? 0,
+    seasonNumber: json['seasonNumber'] ?? 0,
+    episodeId: json['episodeId'] ?? 0,
+    episodeName: json['episodeName'] ?? '',
+    episodeNumber: json['episodeNumber'] ?? 0,
     name: json["name"] ?? '',
     originCountry: (json['origin_country'] as List<dynamic>?)?.map((x) => x as String).toList() ?? [],
     originalLanguage: json["original_language"] ?? '',
@@ -78,6 +90,9 @@ class AiringTodayResults {
     "first_air_date": "${firstAirDate?.year.toString().padLeft(4, '0')}-${firstAirDate?.month.toString().padLeft(2, '0')}-${firstAirDate?.day.toString().padLeft(2, '0')}",
     "genre_ids": List<dynamic>.from(genreIds!.map((x) => x)),
     "id": id,
+    'episodeId':episodeId,
+    'seasonNumber':seasonNumber,
+    'episodeNumber':episodeNumber,
     "name": name,
     "origin_country": List<dynamic>.from(originCountry!.map((x) => x)),
     "original_language": originalLanguage,

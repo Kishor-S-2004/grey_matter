@@ -16,6 +16,7 @@ import '../model/tvShow/top_rated_tv_show.dart';
 class SeriesApiService {
   final String series_top_rated = 'https://api.themoviedb.org/3/tv/top_rated';
   final String airing_today = 'https://api.themoviedb.org/3/tv/airing_today?language=en-US&page=3';
+  final String popular_series ='https://api.themoviedb.org/3/tv/popular';
 
   Future<Tvshow> fetchTopRatedSeries() async {
     final url = Uri.parse(series_top_rated);
@@ -154,4 +155,36 @@ class SeriesApiService {
       throw Exception('Cant fetch Recommended Tv Shows');
     }
   }
+
+
+  Future<AiringToday> fetchPopularSeries()async{
+    final url = Uri.parse(popular_series);
+    final response = await http.get(url,headers: {
+      'Authorization' : 'Bearer ${dotenv.env['MOVIE_API_ACCESS_KEY']}'
+    });
+
+    if(response.statusCode == 200){
+      final data = jsonDecode(response.body);
+      return AiringToday.fromJson(data);
+    }else{
+      throw Exception('Cant fetch popular tv shows');
+    }
+  }
+
+  Future<AiringToday> fetchTrendingSeries()async{
+    final trendingSeriesUrl = 'https://api.themoviedb.org/3/trending/tv/week';
+    final url = Uri.parse(trendingSeriesUrl);
+    final response = await http.get(url,headers: {
+      'Authorization' : 'Bearer ${dotenv.env['MOVIE_API_ACCESS_KEY']}'
+    });
+
+    if(response.statusCode == 200){
+      final data = jsonDecode(response.body);
+      return AiringToday.fromJson(data);
+    }else{
+      throw Exception('Cant fetch popular tv shows');
+    }
+  }
 }
+
+

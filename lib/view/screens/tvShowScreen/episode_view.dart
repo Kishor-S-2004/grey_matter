@@ -8,34 +8,58 @@ import 'package:grey_matter/viewmodel/bloc/episodes/episodes_bloc.dart';
 class EpisodeView extends StatelessWidget {
   final int seriesId;
   final String seriesName;
-  const EpisodeView({super.key,required this.seriesId,required this.seriesName});
+  final int? seasonNumber;
+  const EpisodeView({
+    super.key,
+    required this.seriesId,
+    required this.seriesName,
+    this.seasonNumber
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Appcolor.background,
-        leading: GestureDetector(onTap: () {
-          Navigator.pop(context);
-        },child: Icon(Icons.arrow_back)),
-        title: Text('Episodes',style: GoogleFonts.gabriela(),),
+        iconTheme: IconThemeData(color: Appcolor.primary),
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: Icon(Icons.arrow_back),
+        ),
+        title: Text(
+          'Episodes',
+          style: GoogleFonts.gabriela(
+            color: Appcolor.primary,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
       body: BlocBuilder<EpisodesBloc, EpisodesState>(
         builder: (context, state) {
-          if(state is EpisodesLoading){
+          if (state is EpisodesLoading) {
             return SizedBox();
           }
-          if(state is EpisodesLoaded){
+          if (state is EpisodesLoaded) {
             // final episodes = state.episodes;
             return Column(
               children: [
-                Expanded(child: EpisodeList(episodes: state.episodes,seriesId: seriesId,seriesName: seriesName,))
+                Expanded(
+                  child: EpisodeList(
+                    seasonNumber: seasonNumber,
+                    episodes: state.episodes,
+                    seriesId: seriesId,
+                    seriesName: seriesName,
+                  ),
+                ),
               ],
             );
           }
-          if(state is EpisodesError){
+          if (state is EpisodesError) {
             return Text('Error fetching episodes');
-          }return SizedBox();
+          }
+          return SizedBox();
         },
       ),
     );

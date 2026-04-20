@@ -33,9 +33,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
       width: MediaQuery.of(context).size.width * .5,
       child: Column(
         children: [
-          SizedBox(height: 30,),
+          SizedBox(height: 50,),
           Image(image: AssetImage('assets/logoGreyMatter.png'),height: 80,),
-          SizedBox(height: 30,),
+          SizedBox(height: 20,),
 
           Expanded(
             child: ListView.builder(

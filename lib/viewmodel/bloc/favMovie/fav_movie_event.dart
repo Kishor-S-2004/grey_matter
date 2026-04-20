@@ -9,6 +9,7 @@ class FavMovieEvent with _$FavMovieEvent{
   const factory FavMovieEvent.fetchFavMovies() = FetchFavMovies;
 
   const factory FavMovieEvent.addFavMovie(Result movie) = AddFavMovie;
+  const factory FavMovieEvent.updateFavMovie(List<Result> movie) = UpdateFavMovie;
 
-  const factory FavMovieEvent.removeFavMovie(String movieId) = RemoveFavMovie;
+  const factory FavMovieEvent.removeFavMovie(int movieId) = RemoveFavMovie;
 }

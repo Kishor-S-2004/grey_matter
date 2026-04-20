@@ -14,7 +14,6 @@ class CastDetailsBloc extends Bloc<CastDetailsEvent, CastDetailsState> {
   final SeriesRepositories Seriesrepositories;
   CastDetailsBloc(this.repositories,this.Seriesrepositories) : super(CastDetailsInitial()) {
     on<FetchCastDetailsEvent>((event, emit) async{
-      // TODO: implement event handler
       emit(CastDetailsLoading());
       try{
         final result = await repositories.getCastDetails(event.personId);

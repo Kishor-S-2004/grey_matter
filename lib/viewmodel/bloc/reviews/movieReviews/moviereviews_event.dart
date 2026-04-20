@@ -6,4 +6,5 @@ part 'moviereviews_event.freezed.dart';
 class MovieReviewsEvent with _$MovieReviewsEvent{
   const factory MovieReviewsEvent.fetchReview(int movieId) = FetchReviews;
   const factory MovieReviewsEvent.addReview(MovieReviewResults result) = MovieReviews;
+  const factory MovieReviewsEvent.removeReview(String reviewId) = RemoveMovieReview;
 }

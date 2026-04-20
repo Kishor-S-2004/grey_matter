@@ -33,6 +33,8 @@ class MovieReview {
 }
 
 class MovieReviewResults {
+  String? userId;
+  String? reviewId;
   String? author;
   String? movieName;
   int? movieId;
@@ -44,6 +46,8 @@ class MovieReviewResults {
   String? url;
 
   MovieReviewResults({
+    this.userId,
+    this.reviewId,
     this.author,
     this.movieName,
     this.movieId,
@@ -57,6 +61,8 @@ class MovieReviewResults {
 
   factory MovieReviewResults.fromJson(Map<String, dynamic> json) => MovieReviewResults(
     author: json["author"] ?? '',
+    userId: json['userId'],
+    reviewId: json['reviewId'],
     movieName: json['movie_name'] ?? '',
     movieId: json['movie_id'] ?? 0,
     authorDetails: json["author_details"] != null
@@ -71,6 +77,8 @@ class MovieReviewResults {
 
   Map<String, dynamic> toJson() => {
     "author": author,
+    'userId':userId,
+    'reviewId':reviewId,
     "movie_name":movieName,
     'movie_id':movieId,
     "author_details": authorDetails?.toJson(),

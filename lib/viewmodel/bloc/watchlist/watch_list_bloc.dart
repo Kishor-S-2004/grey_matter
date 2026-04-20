@@ -43,7 +43,7 @@ class WatchListBloc extends Bloc<WatchListEvent, WatchListState> {
       final movies = await _repository.fetchWatchListMovies();
 
       emit(state.copyWith(
-        movies: movies,
+        movies: movies.toList(),
         isLoading: false,
       ));
     } catch (e, s) {

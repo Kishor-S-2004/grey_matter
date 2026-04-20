@@ -39,7 +39,7 @@ class MainScreen extends StatelessWidget {
             items: [
               BottomNavigationBarItem(
                 icon: Icon(
-                  Icons.movie,
+                  Icons.movie_creation_outlined,
                   color: currentIndex == 0 ? Appcolor.primary : Colors.grey,
                 ),
                 label: 'Movies',

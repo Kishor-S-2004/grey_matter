@@ -45,4 +45,14 @@ class SeriesRepositories {
   Future<SeriesRecommendations> getRecommendedSeries(int seriesId)async{
     return await apiService.fetchRecommendedSeries(seriesId);
   }
+
+  Future<AiringToday> getPopularSeries()async{
+    return await apiService.fetchPopularSeries();
+  }
+
+  Future<AiringToday> getTrendingSeries()async{
+    return await apiService.fetchTrendingSeries();
+  }
+
+
 }

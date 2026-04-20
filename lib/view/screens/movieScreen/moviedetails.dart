@@ -8,6 +8,7 @@ import 'package:grey_matter/model/movie/movie_model.dart';
 import 'package:grey_matter/repositories/movie_repositories.dart';
 import 'package:grey_matter/repositories/series_repositories.dart';
 import 'package:grey_matter/view/screens/castDetails_view.dart';
+import 'package:grey_matter/view/theme/appcolor.dart';
 import 'package:grey_matter/view/widgets/homescreen_widgets.dart';
 import 'package:grey_matter/view/widgets/movie_details_widgets.dart';
 import 'package:grey_matter/viewmodel/bloc/credits/credits_bloc.dart';
@@ -25,22 +26,26 @@ import '../../../viewmodel/bloc/watchlist/watch_list_state.dart';
 import 'movieplayingscreen.dart';
 
 class Moviedetails extends StatefulWidget {
+  final String heroTag;
   final int movieId;
   final String movieName;
   final String movieGenre;
   final String movieDescritpion;
   final String posterPath;
   final int? releaseDate;
+  int? releaseYear;
   final double voteAverage;
 
   Moviedetails({
     super.key,
+    required this.heroTag,
     required this.movieId,
     required this.movieName,
     required this.movieGenre,
     required this.movieDescritpion,
     required this.posterPath,
     required this.releaseDate,
+    this.releaseYear,
     required this.voteAverage,
   });
 
@@ -72,17 +77,19 @@ class _MoviedetailsState extends State<Moviedetails> {
           SizedBox(
             height: screenHeight * 0.8,
             width: double.infinity,
-            child: Opacity(
-              opacity: 0.12,
-              child: Image.network(widget.posterPath, fit: BoxFit.fill),
+            child: Hero(
+              tag: widget.heroTag,
+              child: Opacity(
+                opacity: 0.12,
+                child: Image.network(widget.posterPath, fit: BoxFit.fill),
+              ),
             ),
           ),
 
-          /// 🔹 FOREGROUND (SCROLLABLE)
           BlocBuilder<CredtisBloc, CredtisState>(
             builder: (context, state) {
               if (state is CredtisLoading) {
-                return const Center(child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator(color: Appcolor.primary,));
               }
 
               return SingleChildScrollView(
@@ -92,7 +99,6 @@ class _MoviedetailsState extends State<Moviedetails> {
                   children: [
                     const SizedBox(height: 60),
 
-                    /// Movie Name
                     Center(
                       child: CustomText(
                         text: widget.movieName,
@@ -103,28 +109,27 @@ class _MoviedetailsState extends State<Moviedetails> {
 
                     /// Poster
                     AspectRatio(
-                      aspectRatio: 1.6,
-                      child: GestureDetector(
-                        onTap: () {
-                          log('${widget.movieId} movie Id for yt');
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => BlocProvider(
-                                create: (context) =>
-                                    MovieVideoBloc(repositories)
-                                      ..add(FetchMovieUrl(widget.movieId)),
-                                child: MoviePlayingScreen(
-                                  movieId: widget.movieId,
-                                  moviename: widget.movieName,
+                        aspectRatio: 1.6,
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BlocProvider(
+                                  create: (context) =>
+                                      MovieVideoBloc(repositories)
+                                        ..add(FetchMovieUrl(widget.movieId)),
+                                  child: MoviePlayingScreen(
+                                    movieId: widget.movieId,
+                                    movieName: widget.movieName,
+                                  ),
                                 ),
                               ),
-                            ),
-                          );
-                        },
-                        child: Image.network(widget.posterPath),
+                            );
+                          },
+                          child: Image.network(widget.posterPath),
+                        ),
                       ),
-                    ),
 
                     const SizedBox(height: 10),
 
@@ -382,6 +387,8 @@ class _MoviedetailsState extends State<Moviedetails> {
                     
                     final movie = Result(
                       id: widget.movieId,
+                      genreName: widget.movieGenre,
+                      releaseYear: widget.releaseDate,
                       title: widget.movieName,
                       posterPath: widget.posterPath,
                       voteAverage: widget.voteAverage,
@@ -421,8 +428,12 @@ class _MoviedetailsState extends State<Moviedetails> {
                         WatchListEvent.addMovieToWatchList(
                           Result(
                             id: widget.movieId,
+                            genreName: widget.movieGenre,
+                            releaseYear: widget.releaseDate,
+                            title: widget.movieName,
+                            posterPath: widget.posterPath,
+                            voteAverage: widget.voteAverage,
                             overview: widget.movieDescritpion,
-                            title: widget.movieName,posterPath: widget.posterPath,
                           ),
                         ),
                       );
@@ -432,7 +443,7 @@ class _MoviedetailsState extends State<Moviedetails> {
                   },
                   icon: Icon(
                     isBookmarked ? Icons.bookmark : Icons.bookmark_border,
-                    color: Colors.white,
+                    color: Appcolor.primary,
                     size: 30,
                   ),
                 );

@@ -28,8 +28,11 @@ class FavMovieRepository {
         .set({
       'id':movie.id,
       'title': movie.title,
+      'genreName':movie.genreName,
       'overview': movie.overview,
       'poster_path': movie.posterPath,
+      'releaseYear':movie.releaseYear,
+      'voteAverage':movie.voteAverage,
       'createdAt': FieldValue.serverTimestamp(),
     });
   }
@@ -49,25 +52,30 @@ class FavMovieRepository {
         .delete();
   }
 
-  Future<List<Result>> fetchFavMovies() async {
+  Stream<List<Result>> fetchFavMovies() {
     final userId = _auth.currentUser?.uid;
     if (userId == null) throw Exception("User not logged in");
 
-    final snapshot = await _firestore
+    return _firestore
         .collection('favourite_movies')
         .doc(userId)
         .collection('movies')
-        .get();
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        final data = doc.data();
 
-    return snapshot.docs.map((doc) {
-      final data = doc.data();
-
-      return Result(
-        id: data['id'],
-        title: data['title'],
-        overview: data['overview'],
-        posterPath: data['poster_path'],
-      );
-    }).toList();
+        return Result(
+          id: data['id'],
+          title: data['title'],
+          overview: data['overview'],
+          posterPath: data['poster_path'],
+          voteAverage: data['voteAverage'],
+          genreName: data['genreName'],
+          releaseYear: data['releaseYear'],
+        );
+      }).toList();
+    });
   }
 }

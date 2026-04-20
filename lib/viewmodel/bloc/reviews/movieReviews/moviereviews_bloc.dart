@@ -12,6 +12,19 @@ class MoviereviewsBloc extends Bloc<MovieReviewsEvent, MovieReviewsState> {
   MoviereviewsBloc(MovieReviewRepo? movieReviewRepo) : _movieReviewRepo = movieReviewRepo ?? MovieReviewRepo(),super(MovieReviewsState.initial()) {
     on<MovieReviews>(_onAddMovieReviews);
     on<FetchReviews>(_onFetchReviews);
+    on<RemoveMovieReview>(_onRemoveReviews);
+  }
+
+  Future _onRemoveReviews(RemoveMovieReview event,Emitter<MovieReviewsState> emit)async{
+    emit(MovieReviewsState.loading());
+    try{
+      await _movieReviewRepo.removeReview(event.reviewId);
+      emit(MovieReviewsState.removed());
+    }catch (e,s){
+      log('Error : $e');
+      log('Status : $s');
+      emit(MovieReviewsState.failure('$e'));
+    }
   }
 
   Future _onAddMovieReviews(MovieReviews event,Emitter<MovieReviewsState> emit) async{

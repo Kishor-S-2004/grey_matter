@@ -1,5 +1,7 @@
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -73,7 +75,7 @@ class ReviewContainer extends StatelessWidget {
                 margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
+                  border: Border.all(color: Appcolor.primary),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Row(
@@ -267,7 +269,7 @@ class _CastMovieState extends State<CastMovie> {
                   .map((g) => g.name)
                   .toList();
 
-              log('${kW.releaseDate} ${kW.overview}');
+              // log('${kW.releaseDate} ${kW.overview}');
               final imageUrl =
                   (kW.posterPath != null && kW.posterPath!.isNotEmpty)
                   ? 'https://image.tmdb.org/t/p/w500${kW.posterPath}'
@@ -292,28 +294,40 @@ class _CastMovieState extends State<CastMovie> {
                           log('${kW.title} and name is null');
                           Navigator.push(
                             context,
-                            MaterialPageRoute(
-                              builder: (_) => BlocProvider(
+                            PageRouteBuilder(
+                              transitionDuration: const Duration(milliseconds: 900),
+                              reverseTransitionDuration: const Duration(milliseconds: 600),
+                              pageBuilder: (context, animation, secondaryAnimation) => BlocProvider(
                                 create: (context) =>
-                                    CredtisBloc(movieRepositories)
-                                      ..add(FetchCreditDetails(kW.id!)),
+                                CredtisBloc(movieRepositories)
+                                  ..add(FetchCreditDetails(kW.id ?? 0)),
                                 child: BlocProvider(
                                   create: (context) => FavMovieBloc(
                                     repository: FavMovieRepository(),
                                   ),
                                   child: Moviedetails(
-                                    movieId: kW.id!,
-                                    movieName: kW.title!,
-                                    movieGenre: genreNames.first,
-                                    movieDescritpion: kW.overview!,
+                                    heroTag: 'movie_${kW.id}',
+                                    movieId: kW.id ?? 0,
+                                    movieName: kW.title ?? "Unknown",
+                                    movieGenre:
+                                    genreNames.isNotEmpty ? genreNames.first : "Unknown",
+                                    movieDescritpion: kW.overview ?? "No overview",
                                     posterPath: imageUrl,
-                                    releaseDate: kW.releaseDate!.year,
-                                    voteAverage: kW.voteAverage!,
+                                    releaseDate: kW.releaseDate?.year ?? 0,
+                                    voteAverage: kW.voteAverage ?? 0.0,
                                   ),
                                 ),
                               ),
+
+                              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                return FadeTransition(
+                                  opacity: animation,
+                                  child: child,
+                                );
+                              },
                             ),
                           );
+
                           return;
                         } else {
                           log('${kW.name} and title is null');
@@ -366,7 +380,7 @@ class _CastMovieState extends State<CastMovie> {
                               child: Text(
                                 isTapped ? displayTitle : originalTitle,
                                 key: ValueKey(isTapped),
-                                maxLines: 4,
+                                maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.gabriela(
                                   fontWeight: FontWeight.w600,
@@ -442,7 +456,7 @@ class ReviewButton extends StatelessWidget {
               btnText,
               style: GoogleFonts.gabriela(
                 fontWeight: FontWeight.bold,
-                fontSize: 20,
+                fontSize: 15,
                 color: Colors.black,
               ),
             ),
@@ -459,6 +473,7 @@ class ReviewFirebaseContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = FirebaseAuth.instance.currentUser;
     return BlocProvider(
       create: (context) =>
           MoviereviewsBloc(MovieReviewRepo())
@@ -475,6 +490,7 @@ class ReviewFirebaseContainer extends StatelessWidget {
               physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
                 final reviewResults = state.results[index];
+                final userId = reviewResults.userId;
 
                 final avatarPath =
                     reviewResults.authorDetails?.avatarPath ?? '';
@@ -483,6 +499,8 @@ class ReviewFirebaseContainer extends StatelessWidget {
                     ? 'https://image.tmdb.org/t/p/w500$avatarPath'
                     : 'https://via.placeholder.com/150?text=No+Image';
 
+                final isCurrentUser = userId == currentUser?.uid;
+
                 return Container(
                   margin: const EdgeInsets.symmetric(
                     horizontal: 12,
@@ -490,7 +508,7 @@ class ReviewFirebaseContainer extends StatelessWidget {
                   ),
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
+                    border: Border.all(color: Appcolor.primary),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Row(
@@ -525,6 +543,13 @@ class ReviewFirebaseContainer extends StatelessWidget {
                           ],
                         ),
                       ),
+                      IconButton(onPressed: () {
+                        context.read<MoviereviewsBloc>().add(
+                          MovieReviewsEvent.removeReview(
+                           reviewResults.reviewId!
+                          ),
+                        );
+                      }, icon: isCurrentUser ? Icon(Icons.delete_outline,color: Colors.red,size: 20,) : Icon(Icons.delete_outline,color: Colors.transparent,))
                     ],
                   ),
                 );

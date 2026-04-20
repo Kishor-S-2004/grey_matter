@@ -35,6 +35,7 @@ class Result {
   final bool? adult;
   final String? backdropPath;
   final List<int>? genreIds;
+  final String? genreName;
   final int? id;
   final String? originalLanguage;
   final String? originalTitle;
@@ -42,6 +43,7 @@ class Result {
   final double? popularity;
   final String? posterPath;
   final DateTime? releaseDate;
+  final int? releaseYear;
   final String? title;
   final bool? video;
   final double? voteAverage;
@@ -51,6 +53,7 @@ class Result {
     this.adult,
     this.backdropPath,
     this.genreIds,
+    this.genreName,
     this.id,
     this.originalLanguage,
     this.originalTitle,
@@ -58,6 +61,7 @@ class Result {
     this.popularity,
     this.posterPath,
     this.releaseDate,
+    this.releaseYear,
     this.title,
     this.video,
     this.voteAverage,
@@ -66,25 +70,27 @@ class Result {
 
   factory Result.fromJson(Map<String, dynamic> json) {
     return Result(
-      adult: json["adult"],
-      backdropPath: json["backdrop_path"],
+      adult: json["adult"] ?? false,
+      backdropPath: json["backdrop_path"] ?? '',
       genreIds: json["genre_ids"] != null
           ? List<int>.from(json["genre_ids"].map((x) => x))
           : [],
-      id: json["id"],
-      originalLanguage: json["original_language"],
-      originalTitle: json["original_title"],
-      overview: json["overview"],
+      genreName: json['genreName'] ?? '',
+      id: json["id"] ?? 0,
+      originalLanguage: json["original_language"] ?? " ",
+      originalTitle: json["original_title"] ?? '',
+      overview: json["overview"] ?? '',
       popularity: json["popularity"]?.toDouble(),
-      posterPath: json["poster_path"],
+      posterPath: json["poster_path"] ?? '',
       releaseDate: json["release_date"] != null &&
           json["release_date"].toString().isNotEmpty
           ? DateTime.tryParse(json["release_date"])
           : null,
-      title: json["title"],
-      video: json["video"],
-      voteAverage: json["vote_average"]?.toDouble(),
-      voteCount: json["vote_count"],
+      releaseYear: json['releaseYear'] ?? 0,
+      title: json["title"] ?? '',
+      video: json["video"] ?? false,
+      voteAverage: json["vote_average"]?.toDouble() ?? 0.0,
+      voteCount: json["vote_count"] ?? 0,
     );
   }
 
@@ -93,6 +99,7 @@ class Result {
     "backdrop_path": backdropPath,
     "genre_ids": genreIds,
     "id": id,
+    'genreName':genreName,
     "original_language": originalLanguage,
     "original_title": originalTitle,
     "overview": overview,

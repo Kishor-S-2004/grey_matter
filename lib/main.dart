@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_skeleton_ui/flutter_skeleton_ui.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:grey_matter/api_service/movie_apiservice.dart';
@@ -22,19 +23,26 @@ import 'package:grey_matter/view/widgets/bottomnavi.dart';
 import 'package:grey_matter/viewmodel/bloc/airing_today/airingtoday_bloc.dart';
 import 'package:grey_matter/viewmodel/bloc/bottomnavigation/bottom_navigation_bloc.dart';
 import 'package:grey_matter/viewmodel/bloc/credits/credits_bloc.dart';
+import 'package:grey_matter/viewmodel/bloc/episodes/episodes_bloc.dart';
+import 'package:grey_matter/viewmodel/bloc/favMovie/fav_movie_bloc.dart';
 import 'package:grey_matter/viewmodel/bloc/genre/genre_bloc.dart';
 import 'package:grey_matter/viewmodel/bloc/movie/movie_bloc.dart';
 import 'package:grey_matter/viewmodel/bloc/movieRecommendations/movie_recommendation_bloc.dart';
 import 'package:grey_matter/viewmodel/bloc/movieReview/movie_review_bloc.dart';
 import 'package:grey_matter/viewmodel/bloc/nowPlayingMovies/now_playing_movies_bloc.dart';
+import 'package:grey_matter/viewmodel/bloc/popularSeries/popular_series_bloc.dart';
+import 'package:grey_matter/viewmodel/bloc/popularSeries/popular_series_event.dart';
 import 'package:grey_matter/viewmodel/bloc/recommendedSeries/recommended_series_bloc.dart';
 import 'package:grey_matter/viewmodel/bloc/reviews/movieReviews/moviereviews_bloc.dart';
 import 'package:grey_matter/viewmodel/bloc/searchCast/search_cast_bloc.dart';
 import 'package:grey_matter/viewmodel/bloc/searchedMovie/searched_movie_bloc.dart';
 import 'package:grey_matter/viewmodel/bloc/searchedTvShow/searched_tv_show_bloc.dart';
 import 'package:grey_matter/viewmodel/bloc/seriesCredits/series_credits_bloc.dart';
+import 'package:grey_matter/viewmodel/bloc/series_season/season_bloc.dart';
 import 'package:grey_matter/viewmodel/bloc/top_rated_tvshow/top_rated_tv_show_bloc.dart';
 import 'package:grey_matter/viewmodel/bloc/topratedmovie/topratedmovies_bloc.dart';
+import 'package:grey_matter/viewmodel/bloc/trendingSeries/trending_series_bloc.dart';
+import 'package:grey_matter/viewmodel/bloc/trendingSeries/trending_series_event.dart';
 import 'package:grey_matter/viewmodel/bloc/tvShowVideo/tv_show_video_bloc.dart';
 import 'package:grey_matter/viewmodel/bloc/upcomingmovies/upcomingmovies_bloc.dart';
 import 'package:grey_matter/viewmodel/bloc/users/userDetails/userdetails_bloc.dart';
@@ -128,41 +136,75 @@ class _GreyMatterState extends State<GreyMatter> {
         BlocProvider(
           create: (context) => WatchListBloc(WatchlistRepository())
         ),
+        BlocProvider(create: (_) => FavMovieBloc()),
+        BlocProvider(create: (context) => PopularSeriesBloc(seriesRepository)..add(PopularSeriesEvent.fetchPopularSeries()),),
+        BlocProvider(create: (context) => TrendingSeriesBloc(seriesRepository)..add(TrendingSeriesEvent.fetchTrendingSeries()),),
+        BlocProvider(create: (context) => EpisodesBloc(seriesRepository)),
+        BlocProvider(create: (context) => SeasonBloc(seriesRepository))
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(useMaterial3: true,appBarTheme: const AppBarTheme(
-            backgroundColor: Appcolor.background,
-            surfaceTintColor: Colors.transparent)),
-        darkTheme: AppTheme.dark,
-        themeMode: ThemeMode.dark,
+      child: SkeletonTheme(
+        shimmerGradient: LinearGradient(
+          colors: [
+            Color(0xFFD8E3E7),
+            Color(0xFFC8D5DA),
+            Color(0xFFD8E3E7),
+          ],
+          stops: [
+            0.1,
+            0.5,
+            0.9,
+          ],
+        ),
+        darkShimmerGradient: LinearGradient(
+          colors: [
+            Color(0xFFE7BC0F).withOpacity(0.3),
+            Color(0xFFE7BC0F).withOpacity(0.4),
+            Color(0xFFE7BC0F).withOpacity(0.5),
+          ],
+          stops: [
+            0.0,
+            0.2,
+            0.5,
+          ],
+          begin: Alignment(-2.4, -0.2),
+          end: Alignment(2.4, 0.2),
+          tileMode: TileMode.clamp,
+        ),
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(useMaterial3: true,appBarTheme: const AppBarTheme(
+              backgroundColor: Appcolor.background,
+              surfaceTintColor: Colors.transparent)),
+          darkTheme: AppTheme.dark,
+          themeMode: ThemeMode.dark,
 
-        home: AnimatedSplashScreen(
-          duration: 3500,
-          animationDuration: const Duration(milliseconds: 1500),
-          backgroundColor: Colors.black,
-          splashTransition: SplashTransition.fadeTransition,
-          nextScreen: FirebaseAuth.instance.currentUser != null
-              ? MainScreen()
-              : LoginScreen(),
+          home: AnimatedSplashScreen(
+            duration: 3500,
+            animationDuration: const Duration(milliseconds: 1500),
+            backgroundColor: Colors.black,
+            splashTransition: SplashTransition.fadeTransition,
+            nextScreen: FirebaseAuth.instance.currentUser != null
+                ? MainScreen()
+                : LoginScreen(),
 
-          splash: Center(
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SvgPicture.asset("assets/greyMatterLogo.svg", height: 160),
-                  const SizedBox(height: 20),
-                  Text(
-                    'Grey Matter',
-                    style: GoogleFonts.gabriela(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 50,
-                      color: Appcolor.primary,
+            splash: Center(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SvgPicture.asset("assets/greyMatterLogo.svg", height: 160),
+                    const SizedBox(height: 20),
+                    Text(
+                      'Grey Matter',
+                      style: GoogleFonts.gabriela(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 50,
+                        color: Appcolor.primary,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

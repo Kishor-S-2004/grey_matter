@@ -22,6 +22,7 @@ mixin _$MovieReviewsState {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function() added,
+    required TResult Function() removed,
     required TResult Function(List<MovieReviewResults> results) loaded,
     required TResult Function(String error) failure,
   }) => throw _privateConstructorUsedError;
@@ -30,6 +31,7 @@ mixin _$MovieReviewsState {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function()? added,
+    TResult? Function()? removed,
     TResult? Function(List<MovieReviewResults> results)? loaded,
     TResult? Function(String error)? failure,
   }) => throw _privateConstructorUsedError;
@@ -38,6 +40,7 @@ mixin _$MovieReviewsState {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function()? added,
+    TResult Function()? removed,
     TResult Function(List<MovieReviewResults> results)? loaded,
     TResult Function(String error)? failure,
     required TResult orElse(),
@@ -47,6 +50,7 @@ mixin _$MovieReviewsState {
     required TResult Function(Initial value) initial,
     required TResult Function(Loading value) loading,
     required TResult Function(Added value) added,
+    required TResult Function(Removed value) removed,
     required TResult Function(Loaded value) loaded,
     required TResult Function(Failure value) failure,
   }) => throw _privateConstructorUsedError;
@@ -55,6 +59,7 @@ mixin _$MovieReviewsState {
     TResult? Function(Initial value)? initial,
     TResult? Function(Loading value)? loading,
     TResult? Function(Added value)? added,
+    TResult? Function(Removed value)? removed,
     TResult? Function(Loaded value)? loaded,
     TResult? Function(Failure value)? failure,
   }) => throw _privateConstructorUsedError;
@@ -63,6 +68,7 @@ mixin _$MovieReviewsState {
     TResult Function(Initial value)? initial,
     TResult Function(Loading value)? loading,
     TResult Function(Added value)? added,
+    TResult Function(Removed value)? removed,
     TResult Function(Loaded value)? loaded,
     TResult Function(Failure value)? failure,
     required TResult orElse(),
@@ -137,6 +143,7 @@ class _$InitialImpl implements Initial {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function() added,
+    required TResult Function() removed,
     required TResult Function(List<MovieReviewResults> results) loaded,
     required TResult Function(String error) failure,
   }) {
@@ -149,6 +156,7 @@ class _$InitialImpl implements Initial {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function()? added,
+    TResult? Function()? removed,
     TResult? Function(List<MovieReviewResults> results)? loaded,
     TResult? Function(String error)? failure,
   }) {
@@ -161,6 +169,7 @@ class _$InitialImpl implements Initial {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function()? added,
+    TResult Function()? removed,
     TResult Function(List<MovieReviewResults> results)? loaded,
     TResult Function(String error)? failure,
     required TResult orElse(),
@@ -177,6 +186,7 @@ class _$InitialImpl implements Initial {
     required TResult Function(Initial value) initial,
     required TResult Function(Loading value) loading,
     required TResult Function(Added value) added,
+    required TResult Function(Removed value) removed,
     required TResult Function(Loaded value) loaded,
     required TResult Function(Failure value) failure,
   }) {
@@ -189,6 +199,7 @@ class _$InitialImpl implements Initial {
     TResult? Function(Initial value)? initial,
     TResult? Function(Loading value)? loading,
     TResult? Function(Added value)? added,
+    TResult? Function(Removed value)? removed,
     TResult? Function(Loaded value)? loaded,
     TResult? Function(Failure value)? failure,
   }) {
@@ -201,6 +212,7 @@ class _$InitialImpl implements Initial {
     TResult Function(Initial value)? initial,
     TResult Function(Loading value)? loading,
     TResult Function(Added value)? added,
+    TResult Function(Removed value)? removed,
     TResult Function(Loaded value)? loaded,
     TResult Function(Failure value)? failure,
     required TResult orElse(),
@@ -262,6 +274,7 @@ class _$LoadingImpl implements Loading {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function() added,
+    required TResult Function() removed,
     required TResult Function(List<MovieReviewResults> results) loaded,
     required TResult Function(String error) failure,
   }) {
@@ -274,6 +287,7 @@ class _$LoadingImpl implements Loading {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function()? added,
+    TResult? Function()? removed,
     TResult? Function(List<MovieReviewResults> results)? loaded,
     TResult? Function(String error)? failure,
   }) {
@@ -286,6 +300,7 @@ class _$LoadingImpl implements Loading {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function()? added,
+    TResult Function()? removed,
     TResult Function(List<MovieReviewResults> results)? loaded,
     TResult Function(String error)? failure,
     required TResult orElse(),
@@ -302,6 +317,7 @@ class _$LoadingImpl implements Loading {
     required TResult Function(Initial value) initial,
     required TResult Function(Loading value) loading,
     required TResult Function(Added value) added,
+    required TResult Function(Removed value) removed,
     required TResult Function(Loaded value) loaded,
     required TResult Function(Failure value) failure,
   }) {
@@ -314,6 +330,7 @@ class _$LoadingImpl implements Loading {
     TResult? Function(Initial value)? initial,
     TResult? Function(Loading value)? loading,
     TResult? Function(Added value)? added,
+    TResult? Function(Removed value)? removed,
     TResult? Function(Loaded value)? loaded,
     TResult? Function(Failure value)? failure,
   }) {
@@ -326,6 +343,7 @@ class _$LoadingImpl implements Loading {
     TResult Function(Initial value)? initial,
     TResult Function(Loading value)? loading,
     TResult Function(Added value)? added,
+    TResult Function(Removed value)? removed,
     TResult Function(Loaded value)? loaded,
     TResult Function(Failure value)? failure,
     required TResult orElse(),
@@ -387,6 +405,7 @@ class _$AddedImpl implements Added {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function() added,
+    required TResult Function() removed,
     required TResult Function(List<MovieReviewResults> results) loaded,
     required TResult Function(String error) failure,
   }) {
@@ -399,6 +418,7 @@ class _$AddedImpl implements Added {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function()? added,
+    TResult? Function()? removed,
     TResult? Function(List<MovieReviewResults> results)? loaded,
     TResult? Function(String error)? failure,
   }) {
@@ -411,6 +431,7 @@ class _$AddedImpl implements Added {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function()? added,
+    TResult Function()? removed,
     TResult Function(List<MovieReviewResults> results)? loaded,
     TResult Function(String error)? failure,
     required TResult orElse(),
@@ -427,6 +448,7 @@ class _$AddedImpl implements Added {
     required TResult Function(Initial value) initial,
     required TResult Function(Loading value) loading,
     required TResult Function(Added value) added,
+    required TResult Function(Removed value) removed,
     required TResult Function(Loaded value) loaded,
     required TResult Function(Failure value) failure,
   }) {
@@ -439,6 +461,7 @@ class _$AddedImpl implements Added {
     TResult? Function(Initial value)? initial,
     TResult? Function(Loading value)? loading,
     TResult? Function(Added value)? added,
+    TResult? Function(Removed value)? removed,
     TResult? Function(Loaded value)? loaded,
     TResult? Function(Failure value)? failure,
   }) {
@@ -451,6 +474,7 @@ class _$AddedImpl implements Added {
     TResult Function(Initial value)? initial,
     TResult Function(Loading value)? loading,
     TResult Function(Added value)? added,
+    TResult Function(Removed value)? removed,
     TResult Function(Loaded value)? loaded,
     TResult Function(Failure value)? failure,
     required TResult orElse(),
@@ -464,6 +488,137 @@ class _$AddedImpl implements Added {
 
 abstract class Added implements MovieReviewsState {
   const factory Added() = _$AddedImpl;
+}
+
+/// @nodoc
+abstract class _$$RemovedImplCopyWith<$Res> {
+  factory _$$RemovedImplCopyWith(
+    _$RemovedImpl value,
+    $Res Function(_$RemovedImpl) then,
+  ) = __$$RemovedImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$RemovedImplCopyWithImpl<$Res>
+    extends _$MovieReviewsStateCopyWithImpl<$Res, _$RemovedImpl>
+    implements _$$RemovedImplCopyWith<$Res> {
+  __$$RemovedImplCopyWithImpl(
+    _$RemovedImpl _value,
+    $Res Function(_$RemovedImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of MovieReviewsState
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+
+class _$RemovedImpl implements Removed {
+  const _$RemovedImpl();
+
+  @override
+  String toString() {
+    return 'MovieReviewsState.removed()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$RemovedImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function() added,
+    required TResult Function() removed,
+    required TResult Function(List<MovieReviewResults> results) loaded,
+    required TResult Function(String error) failure,
+  }) {
+    return removed();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function()? added,
+    TResult? Function()? removed,
+    TResult? Function(List<MovieReviewResults> results)? loaded,
+    TResult? Function(String error)? failure,
+  }) {
+    return removed?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function()? added,
+    TResult Function()? removed,
+    TResult Function(List<MovieReviewResults> results)? loaded,
+    TResult Function(String error)? failure,
+    required TResult orElse(),
+  }) {
+    if (removed != null) {
+      return removed();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(Initial value) initial,
+    required TResult Function(Loading value) loading,
+    required TResult Function(Added value) added,
+    required TResult Function(Removed value) removed,
+    required TResult Function(Loaded value) loaded,
+    required TResult Function(Failure value) failure,
+  }) {
+    return removed(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(Initial value)? initial,
+    TResult? Function(Loading value)? loading,
+    TResult? Function(Added value)? added,
+    TResult? Function(Removed value)? removed,
+    TResult? Function(Loaded value)? loaded,
+    TResult? Function(Failure value)? failure,
+  }) {
+    return removed?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(Initial value)? initial,
+    TResult Function(Loading value)? loading,
+    TResult Function(Added value)? added,
+    TResult Function(Removed value)? removed,
+    TResult Function(Loaded value)? loaded,
+    TResult Function(Failure value)? failure,
+    required TResult orElse(),
+  }) {
+    if (removed != null) {
+      return removed(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class Removed implements MovieReviewsState {
+  const factory Removed() = _$RemovedImpl;
 }
 
 /// @nodoc
@@ -546,6 +701,7 @@ class _$LoadedImpl implements Loaded {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function() added,
+    required TResult Function() removed,
     required TResult Function(List<MovieReviewResults> results) loaded,
     required TResult Function(String error) failure,
   }) {
@@ -558,6 +714,7 @@ class _$LoadedImpl implements Loaded {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function()? added,
+    TResult? Function()? removed,
     TResult? Function(List<MovieReviewResults> results)? loaded,
     TResult? Function(String error)? failure,
   }) {
@@ -570,6 +727,7 @@ class _$LoadedImpl implements Loaded {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function()? added,
+    TResult Function()? removed,
     TResult Function(List<MovieReviewResults> results)? loaded,
     TResult Function(String error)? failure,
     required TResult orElse(),
@@ -586,6 +744,7 @@ class _$LoadedImpl implements Loaded {
     required TResult Function(Initial value) initial,
     required TResult Function(Loading value) loading,
     required TResult Function(Added value) added,
+    required TResult Function(Removed value) removed,
     required TResult Function(Loaded value) loaded,
     required TResult Function(Failure value) failure,
   }) {
@@ -598,6 +757,7 @@ class _$LoadedImpl implements Loaded {
     TResult? Function(Initial value)? initial,
     TResult? Function(Loading value)? loading,
     TResult? Function(Added value)? added,
+    TResult? Function(Removed value)? removed,
     TResult? Function(Loaded value)? loaded,
     TResult? Function(Failure value)? failure,
   }) {
@@ -610,6 +770,7 @@ class _$LoadedImpl implements Loaded {
     TResult Function(Initial value)? initial,
     TResult Function(Loading value)? loading,
     TResult Function(Added value)? added,
+    TResult Function(Removed value)? removed,
     TResult Function(Loaded value)? loaded,
     TResult Function(Failure value)? failure,
     required TResult orElse(),
@@ -706,6 +867,7 @@ class _$FailureImpl implements Failure {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function() added,
+    required TResult Function() removed,
     required TResult Function(List<MovieReviewResults> results) loaded,
     required TResult Function(String error) failure,
   }) {
@@ -718,6 +880,7 @@ class _$FailureImpl implements Failure {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function()? added,
+    TResult? Function()? removed,
     TResult? Function(List<MovieReviewResults> results)? loaded,
     TResult? Function(String error)? failure,
   }) {
@@ -730,6 +893,7 @@ class _$FailureImpl implements Failure {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function()? added,
+    TResult Function()? removed,
     TResult Function(List<MovieReviewResults> results)? loaded,
     TResult Function(String error)? failure,
     required TResult orElse(),
@@ -746,6 +910,7 @@ class _$FailureImpl implements Failure {
     required TResult Function(Initial value) initial,
     required TResult Function(Loading value) loading,
     required TResult Function(Added value) added,
+    required TResult Function(Removed value) removed,
     required TResult Function(Loaded value) loaded,
     required TResult Function(Failure value) failure,
   }) {
@@ -758,6 +923,7 @@ class _$FailureImpl implements Failure {
     TResult? Function(Initial value)? initial,
     TResult? Function(Loading value)? loading,
     TResult? Function(Added value)? added,
+    TResult? Function(Removed value)? removed,
     TResult? Function(Loaded value)? loaded,
     TResult? Function(Failure value)? failure,
   }) {
@@ -770,6 +936,7 @@ class _$FailureImpl implements Failure {
     TResult Function(Initial value)? initial,
     TResult Function(Loading value)? loading,
     TResult Function(Added value)? added,
+    TResult Function(Removed value)? removed,
     TResult Function(Loaded value)? loaded,
     TResult Function(Failure value)? failure,
     required TResult orElse(),

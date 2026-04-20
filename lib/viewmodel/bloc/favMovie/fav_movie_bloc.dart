@@ -1,10 +1,14 @@
+import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:grey_matter/repositories/favMovie_repositories.dart';
+import '../../../model/movie/movie_model.dart';
 import 'fav_movie_event.dart';
 import 'fav_movie_state.dart';
 
 class FavMovieBloc extends Bloc<FavMovieEvent, FavMovieState> {
   final FavMovieRepository _repository;
+
+  StreamSubscription<List<Result>>? _favSubscription;
 
   FavMovieBloc({FavMovieRepository? repository})
       : _repository = repository ?? FavMovieRepository(),
@@ -12,19 +16,25 @@ class FavMovieBloc extends Bloc<FavMovieEvent, FavMovieState> {
 
     on<FetchFavMovies>(_onFetch);
     on<AddFavMovie>(_onAdd);
+    on<RemoveFavMovie>(_onRemove);
+    on<UpdateFavMovie>(_onUpdate);
   }
 
-  Future<void> _onFetch(
-      FetchFavMovies event,
-      Emitter<FavMovieState> emit,
-      ) async {
+  Future<void> _onFetch(FetchFavMovies event, Emitter<FavMovieState> emit,) async {
     emit(const FavMovieState.loading());
-    try {
-      final movies = await _repository.fetchFavMovies();
-      emit(FavMovieState.loaded(movies));
-    } catch (e) {
-      emit(FavMovieState.error(e.toString()));
-    }
+
+    await _favSubscription?.cancel();
+
+    _favSubscription = _repository.fetchFavMovies().listen((movies) {
+      add(UpdateFavMovie(movies));
+    });
+  }
+
+  void _onUpdate(
+      UpdateFavMovie event,
+      Emitter<FavMovieState> emit,
+      ) {
+    emit(FavMovieState.loaded(event.movie));
   }
 
   Future<void> _onAdd(
@@ -32,15 +42,12 @@ class FavMovieBloc extends Bloc<FavMovieEvent, FavMovieState> {
       Emitter<FavMovieState> emit,
       ) async {
     try {
-      emit(const FavMovieState.loading());
-
       final movieId = event.movie.id!;
 
-      final isFav = await _repository.fetchFavMovies();
+      final currentMovies = state is Loaded ? (state as Loaded).movie
+          : [];
 
-      final exists = isFav.any(
-            (movie) => movie.id == event.movie.id,
-      );
+      final exists = currentMovies.any((m) => m.id == movieId);
 
       if (exists) {
         await _repository.removeFavourite(movieId);
@@ -49,12 +56,25 @@ class FavMovieBloc extends Bloc<FavMovieEvent, FavMovieState> {
         await _repository.addToFavMovie(event.movie);
         emit(FavMovieState.added());
       }
-
-      final updatedMovies = await _repository.fetchFavMovies();
-
-      emit(FavMovieState.loaded(updatedMovies));
     } catch (e) {
       emit(FavMovieState.error(e.toString()));
     }
+  }
+
+  Future<void> _onRemove(
+      RemoveFavMovie event,
+      Emitter<FavMovieState> emit,
+      ) async {
+    try {
+      await _repository.removeFavourite(event.movieId);
+    } catch (e) {
+      emit(FavMovieState.error(e.toString()));
+    }
+  }
+
+  @override
+  Future<void> close() {
+    _favSubscription?.cancel();
+    return super.close();
   }
 }
